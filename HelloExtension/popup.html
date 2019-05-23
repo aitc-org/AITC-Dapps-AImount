@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+  <head>
+    <title>CIC Crypto Wallet</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="popup.js"></script>
+    <script src="bundle.js"></script>
+    <link rel="stylesheet" href="popup.css" type="text/css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  </head>
+  <body>
+    <div id="app-content">
+      <div class="app">
+        <div class="app-header app-header--back-drop">
+          <div class="app-header__contents">
+            <div class="app-header__logo-container">
+              <img class="app-header__metafox-logo app-header__metafox-logo--horizontal" height="30" src="Image/CI_logo-01.png">
+              <img class="app-header__metafox-logo app-header__metafox-logo--icon" height="42" width="48" src="Image/CI_logo-01.png">
+            </div>
+            <div class="app-header__account-menu-container">
+              <div class="app-header__network-component-wrapper">
+                <div class="network-component pointer kovan-test-network" title="GIB Test Network" id="togglenode">
+                  <div class="network-indicator">
+                    <div class="menu-icon-circle">
+                      <div style="background: rgb(105, 4, 150); border: none; height: 12px; width: 12px; border-radius: 22px"></div>
+                    </div>
+                    <div class="network-name">GIB Test Network</div>
+                    <i class="fa fa-chevron-down fa-lg network-caret"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class=".menu-droppo-container network-droppo" style="position: absolute; top: 58px; width: 309px; z-index: 55;"> 
+            <style>
+                .menu-droppo-enter {
+                  transition: transform 300ms ease-in-out;
+                  transform: translateY(-200%);
+                }
+        
+                .menu-droppo-enter.menu-droppo-enter-active {
+                  transition: transform 300ms ease-in-out;
+                  transform: translateY(0%);
+                }
+        
+                .menu-droppo-leave {
+                  transition: transform 300ms ease-in-out;
+                  transform: translateY(0%);
+                }
+        
+                .menu-droppo-leave.menu-droppo-leave-active {
+                  transition: transform 300ms ease-in-out;
+                  transform: translateY(-200%);
+                }
+            </style>
+        <div class="menu-droppo" id="nodepopup" style="display:none;border-radius: 4px; padding: 18px 8px; background: white; box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 2px 2px;">
+            <div class="network-dropdown-header">
+              <div class="network-dropdown-title">Networks</div>
+              <div class="network-dropdown-divider"></div>
+              <div class="network-dropdown-content">The default network for Ether transactions is Main Net.</div>
+            </div>   
+            <li class="dropdown-menu-item" style="list-style: none; padding: 12px 0px; font-size: 16px; font-style: normal; cursor: pointer; display: flex; justify-content: flex-start; align-items: center; color:black; line-height: 20px; border-color: rgb(3, 135, 137);">
+              <div class="network-check__transparent">✓</div>
+              <div class="menu-icon-circle">
+                <div style="background: rgb(41, 182, 175); border: none; height: 12px; width: 12px;"></div>
+              </div>
+              <span class="network-name-item" style="color: rgb(155, 155, 155);">Main Ethereum Network</span>
+            </li>  
+            <li class="dropdown-menu-item" style="list-style: none; padding: 12px 0px; font-size: 16px; font-style: normal; cursor: pointer; display: flex; justify-content: flex-start; align-items: center; color: black; line-height: 20px;">
+              <i class="fa fa-check"></i>
+              <div class="menu-icon-circle--active">
+                <div style="background: rgb(112, 87, 255); border: none; height: 12px; width: 12px;"></div>
+              </div>
+              <span class="network-name-item" style="color:black;">Kovan Test Network</span>
+            </li> 
+        </div>
+        </div>
+
+        <div class="main-container-wrapper">
+          <div class="main-container">
+            <div class="account-and-transaction-details">
+              <div class="transaction-view">
+                <div class="menu-bar"></div>
+                <div class="transaction-view__balance-wrapper">
+                  <div class="transaction-view-balance">
+                    <div class="transaction-view-balance__balance-container">
+                      <img class="balance-icon" style="height:50px; width:50px;" src="https://www.cellintel.io/img/supernode/elements.png">
+                      <div class>
+                        <div class title="" style="display: inline;">
+                          <div class="transaction-view-balance__balance">
+                            <div class="transaction-view-balance__primary-container">
+                              <div class="currency-display-component transaction-view-balance__primary-balance">
+                                <span class="currency-display-component__text" id="accbal">5.555</span>
+                                <span class="currency-display-component__suffix" id="balcurrency">CIC</span>
+                              </div>
+                            </div>
+                            <div class="transaction-view-balance__buttons" style="padding:5px">
+                              <button class="button btn-secondary transaction-view-balance__button">Deposit</button>
+                              <button class="button btn-secondary transaction-view-balance__button" style="margin-left:5px;" id="sendtr">Send</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="transaction-list" style="display:none;" id="sendtrform">
+                    <div class="page-container">
+                        <div class="page-container__header">
+                          <div class="page-container__title"></div>
+                          <form style="color:black;">
+                              <div class="form-group row">
+                                <label for="staticEmail" class="col-sm-2 col-form-label">To</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputto" placeholder="To">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <label for="inputPassword" class="col-sm-2 col-form-label">Amount</label>
+                                <div class="col-sm-10">
+                                  <input type="text" class="form-control" id="inputamount" placeholder="Amount">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="inputPassword" class="col-sm-2 col-form-label">InputHex</label>
+                                  <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputhex" placeholder="Input">
+                                  </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="send">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
