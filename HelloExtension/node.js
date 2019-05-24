@@ -1,7 +1,9 @@
 const crypto = require('crypto');
 const sdag = require('sdagsign');
 
-var nonce,balance;
+var nonce;
+var settransactionlocal;
+var a = "";
 //Create account
 const pri = '9cecb7cdec34ba8d27039781fd4d5e0bd0b9aa233c49aa75588bf7d2ba71536a';
 let account = new sdag.Accounts.NewAccount(pri)
@@ -37,6 +39,8 @@ function signTransaction(to,amount,inputhex){
     var signtrans = transaction.GetSignRawHexFull();
     var result = signtrans.result;
     console.log(result);
+    localStorage.ls_to = to;
+    localStorage.ls_amount = amount;
     sendTransactionBroadcast(result);
 }
 
@@ -49,6 +53,7 @@ function sendTransactionBroadcast(result){
     contentType: 'text/plain; charset=UTF-8', 
     success:function(json){ 
       console.log(json);
+      sethistory();
     }, 
     error: function() { 
     alert("Error"); 
@@ -83,7 +88,6 @@ function getNonce() {
       var data = JSON.parse(this.response);
       if (request.status >= 200 && request.status < 400) {
         nonce = data.Nonce;
-        balance = data.Balance;
       } else {
         console.log('error');
       }
@@ -93,16 +97,69 @@ function getNonce() {
     return nonce;
 }
 
+function getBalance() {
+    var request = new XMLHttpRequest();
+    request.open('GET', 'http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac', true);
+    request.onload = function () {
+      var data = JSON.parse(this.response);
+      if (request.status >= 200 && request.status < 400) {
+        var bal = data.Balance;
+        var etherprice = bal / 1000000000000000000;
+        //$('#accbal').innerHTML = etherprice;
+        document.getElementById("accbal").innerHTML = etherprice;
+        sethistory();
+      } else {
+        console.log('error');
+      }
+    }
+    // Send request
+    request.send(null);
+}
 
 window.addEventListener('load', function load(event){
+    getBalance();
     var createButton = document.getElementById('send');
     createButton.addEventListener('click', function() { 
        var to = document.getElementById('inputto').value;
        var amount = document.getElementById('inputamount').value;
        var inputhex = document.getElementById('inputhex').value;
+       amount = parseFloat(amount);
+       amount = amount*Math.pow(10, 18);
+       amount = String(amount);
        signTransaction(to,amount,inputhex);
+       getBalance();
     });
+    
 });
+
+
+function sethistory(){
+
+    if ((localStorage.getItem("ls_to") === null) && (localStorage.getItem("ls_amount") === null)) {
+       
+    }
+    else{
+        var toaddress = localStorage.ls_to;
+        var amountbalance = localStorage.ls_amount;
+        amountbalance = amountbalance / 1000000000000000000;
+        var status = "nonverified";
+    
+        var a = '<div class="grid-container">';
+        a += '<div class="item1">'+toaddress+'</div>';
+        a += '<div class="item2">Contract Interaction</div>';
+        a += '<div class="item3" style="text-align:right">';
+        a += '<span class="currency-display-component__text">-'+amountbalance+'</span>';
+        a += '<span class="currency-display-component__suffix">CIC</span>';
+        a += '</div>';
+        a += '<div class="item4"><span class="transaction-status--confirmed">'+status+'</span></div>';
+        a += '</div>';
+        
+        $('#historylist').append(a);
+    }
+    
+    
+
+}
 
 
   

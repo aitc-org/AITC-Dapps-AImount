@@ -6,14 +6,14 @@ $(document).ready(function() {
   $('#sendtr').click(function(){
     $('#sendtrform').toggle();
   });
-  getBalanceandNonce();
+  //getBalanceandNonce();
  });
 
  
 function getBalanceandNonce() {
-    var nonce,address,bal;
+    var nonce,bal;
     var request = new XMLHttpRequest();
-    request.open('GET', 'http://192.168.51.203:9006/getAccount?address=5428d8cb7de5926ce93aa9e63a499225a9df1fb2', true);
+    request.open('GET', 'http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac', false);
     request.onload = function () {
       var data = JSON.parse(this.response);
       if (request.status >= 200 && request.status < 400) {
@@ -21,7 +21,6 @@ function getBalanceandNonce() {
         var etherprice = bal / 1000000000000000000;
         document.getElementById("accbal").innerHTML = etherprice;
         nonce = data.Nonce;
-        address = data.Address;
       
       } else {
         console.log('error');
@@ -105,3 +104,5 @@ function signTransaction(){
     } 
     doAjax(); 
   }
+
+  
