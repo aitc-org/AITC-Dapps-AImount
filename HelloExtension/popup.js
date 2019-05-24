@@ -28,6 +28,7 @@ function getBalanceandNonce() {
     }
     // Send request
     request.send(null);
+    return nonce;
   }
 
 
