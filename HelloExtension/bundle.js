@@ -22546,7 +22546,7 @@ function getBalance() {
         bal = parseFloat(bal);
         var etherprice = bal / 1000000000000000000;
         document.getElementById("accbal").innerHTML = String(etherprice);
-        alert(etherprice);
+        //alert(etherprice);
         sethistory();
       }, 
       error: function() { 
