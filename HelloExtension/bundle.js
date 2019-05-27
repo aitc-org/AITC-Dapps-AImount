@@ -22434,20 +22434,19 @@ if (typeof(Storage) !== "undefined") {
     console.log('Sorry! No Web Storage support..');
 }
 
-
-
-function signTransaction(to,amount,inputhex){
-    nonce = getNonce();
-    console.log(nonce);
-    //Create transaction tx.
-    tx = {
-        To : to,
-        PrivateKey : pri,
-        Balance : amount,
-        Nonce : String(nonce),
-        Gas : "1",
-        Type : "a64",
-        Input : inputhex
+function signTransaction(to,amount,inputhex,nonce){
+    //nonce = getNonce();
+    //console.log(nonce);
+    if(nonce!== undefined){
+      //Create transaction tx.
+      tx = {
+      To : to,
+      PrivateKey : pri,
+      Balance : amount,
+      Nonce : String(nonce),
+      Gas : "1",
+      Type : "a64",
+      Input : inputhex
     }  
     let transaction = new sdag.Signs.NewTransaction(pri,tx)
     //Sign Transaction using GetSignRawHexFull() and use output result for broadcast.
@@ -22457,6 +22456,7 @@ function signTransaction(to,amount,inputhex){
     localStorage.ls_to = to;
     localStorage.ls_amount = amount;
     sendTransactionBroadcast(result);
+    }
 }
 
 function sendTransactionBroadcast(result){ 
@@ -22468,6 +22468,7 @@ function sendTransactionBroadcast(result){
     contentType: 'text/plain; charset=UTF-8', 
     success:function(json){ 
       console.log(json);
+      getBalance();
       sethistory();
     }, 
     error: function() { 
@@ -22496,23 +22497,26 @@ function EncryptKeys(){
     console.log(encrypted);
 }
 
-function getNonce() {
+function getNonce(to,amount,inputhex) {
     var request = new XMLHttpRequest();
-    request.open('GET', 'http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac', false);
+    request.open('GET', 'http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac', true);
     request.onload = function () {
       var data = JSON.parse(this.response);
       if (request.status >= 200 && request.status < 400) {
         nonce = data.Nonce;
+        signTransaction(to,amount,inputhex,nonce);
+        getBalance();
       } else {
         console.log('error');
       }
     }
     // Send request
     request.send(null);
-    return nonce;
+    //return nonce;
 }
 
 function getBalance() {
+  /*
     var request = new XMLHttpRequest();
     request.open('GET', 'http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac', true);
     request.onload = function () {
@@ -22520,8 +22524,8 @@ function getBalance() {
       if (request.status >= 200 && request.status < 400) {
         var bal = data.Balance;
         var etherprice = bal / 1000000000000000000;
-        //$('#accbal').innerHTML = etherprice;
         document.getElementById("accbal").innerHTML = etherprice;
+        alert(etherprice);
         sethistory();
       } else {
         console.log('error');
@@ -22529,7 +22533,28 @@ function getBalance() {
     }
     // Send request
     request.send(null);
+    */
+
+    $.ajax({ 
+      type : "GET", 
+      url : "http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac",   
+      contentType: 'text/plain; charset=UTF-8', 
+      success:function(data){ 
+        console.log(data);
+        var data1 = JSON.parse(data);
+        var bal = data1.Balance;
+        bal = parseFloat(bal);
+        var etherprice = bal / 1000000000000000000;
+        document.getElementById("accbal").innerHTML = String(etherprice);
+        alert(etherprice);
+        sethistory();
+      }, 
+      error: function() { 
+      alert("Error"); 
+      } 
+      }); 
 }
+
 
 window.addEventListener('load', function load(event){
     getBalance();
@@ -22541,8 +22566,9 @@ window.addEventListener('load', function load(event){
        amount = parseFloat(amount);
        amount = amount*Math.pow(10, 18);
        amount = String(amount);
-       signTransaction(to,amount,inputhex);
-       getBalance();
+       getNonce(to,amount,inputhex);
+       //signTransaction(to,amount,inputhex);
+       //getBalance();
     });
     
 });
@@ -22575,6 +22601,8 @@ function sethistory(){
     
 
 }
+
+
 
 
   
