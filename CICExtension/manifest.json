@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "CIC Wallet",
+  "description": "The CIC Wallet in your browser",
+  "version": "1.0",
+  
+  "browser_action": {
+   "default_icon": "Image/CI_logo-01.png",
+   "default_popup": "popup.html"
+  },
+  "icons": { "16": "Image/CI_logo-01.png",
+    "48": "Image/CI_logo-01.png",
+   "128": "Image/CI_logo-01.png" 
+  },
+  "permissions": [
+   "activeTab"
+   ]
+}
