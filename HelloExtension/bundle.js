@@ -22475,9 +22475,10 @@ function sendTransactionBroadcast(result,amount){
       console.log(newetherprice);
       document.getElementById("accbal").innerHTML = newetherprice;
       ShowBalance = minus;
+      nonce = nonce + 1;
       sethistory();
       document.getElementById("sendtrform").style.display = "none";
-
+      console.log('new nonce:'+nonce);
     }, 
     error: function() { 
     alert("Error"); 
@@ -22506,6 +22507,8 @@ function EncryptKeys(){
 }
 
 function getNonce(to,amount,inputhex) {
+    
+    /*
     var request = new XMLHttpRequest();
     request.open('GET', 'http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac', true);
     request.onload = function () {
@@ -22520,7 +22523,11 @@ function getNonce(to,amount,inputhex) {
     }
     // Send request
     request.send(null);
-    //return nonce;
+    */
+   //This is only for demo.
+   console.log('nonce:'+nonce);
+   var result = signTransaction(to,amount,inputhex,nonce);
+   sendTransactionBroadcast(result,amount);
 }
 
 function getBalance() {
@@ -22534,12 +22541,15 @@ function getBalance() {
         console.log(data);
         var data1 = JSON.parse(data);
         ShowBalance = data1.Balance;
+        nonce = data1.Nonce; //This is only for demo.
         console.log(ShowBalance);
+        console.log('api nonce:'+nonce);
         
         ShowBalance = parseFloat(ShowBalance);
         var etherprice = ShowBalance / 1000000000000000000;
         document.getElementById("accbal").innerHTML = String(etherprice);
         console.log(etherprice);
+        sethistory();
       }, 
       error: function() { 
       alert("Error"); 
