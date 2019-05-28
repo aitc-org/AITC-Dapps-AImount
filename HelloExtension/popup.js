@@ -5,8 +5,10 @@ $(document).ready(function() {
 
   $('#sendtr').click(function(){
     $('#sendtrform').toggle();
+    document.getElementById('inputto').value = "";
+    document.getElementById('inputamount').value = "";
+    document.getElementById('inputhex').value = "";
   });
-  //getBalanceandNonce();
  });
 
  
@@ -26,7 +28,6 @@ function getBalanceandNonce() {
         console.log('error');
       }
     }
-    // Send request
     request.send(null);
     return nonce;
   }
@@ -105,5 +106,3 @@ function signTransaction(){
     } 
     doAjax(); 
   }
-
-  

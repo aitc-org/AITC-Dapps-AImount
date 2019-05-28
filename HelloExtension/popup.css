@@ -156,7 +156,8 @@ body{
     flex: 1 0 auto;
     min-height: 0;
     width: 100%;
-    color: white;
+    color: #4d4d4d;
+    background-image: url("Image/CICogo.png");
 }
 .main-container {
     z-index: 18;
@@ -173,7 +174,7 @@ body{
 }
 .transaction-view {
     flex: 1 1 66.5%;
-    background: black;
+    /*background: black;*/
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -247,11 +248,12 @@ body{
     }
     .main-container-wrapper {
         flex: 1;
+        background-image: url("Image/logo3.png");
     }
     .main-container {
         width: 100%;
         overflow-y: auto;
-        background-color: black;
+        /*background-color: black;*/
     }
     .transaction-view__balance-wrapper {
         display: flex;
@@ -282,7 +284,8 @@ body{
         justify-content: center;
     }
     #app-content {
-        background-color: black;
+        background-color: white;
+        color: #4d4d4d;
     }
     .transaction-view-balance__buttons {
         margin-bottom: 16px;
@@ -483,7 +486,8 @@ body{
         display: grid;
         grid-template-areas: 'myArea myArea';
         grid-gap: 8px;
-        background-color: white;
+        /*background-color: white;*/
+        background: rgb(255,255,255,0.7);
         padding: 10px;
 
         box-sizing: border-box;

@@ -22419,6 +22419,7 @@ const sdag = require('sdagsign');
 var nonce;
 var settransactionlocal;
 var a = "";
+var ShowBalance;
 //Create account
 const pri = '9cecb7cdec34ba8d27039781fd4d5e0bd0b9aa233c49aa75588bf7d2ba71536a';
 let account = new sdag.Accounts.NewAccount(pri)
@@ -22455,30 +22456,37 @@ function signTransaction(to,amount,inputhex,nonce){
     console.log(result);
     localStorage.ls_to = to;
     localStorage.ls_amount = amount;
-    sendTransactionBroadcast(result);
+    return result;
     }
 }
 
-function sendTransactionBroadcast(result){ 
-    var doAjax = function() { 
+function sendTransactionBroadcast(result,amount){ 
     $.ajax({ 
     type : "POST", 
+    async: true,
+    timeout: 3000,
     url : "http://192.168.51.212:9999/broadcast",	
     data: JSON.stringify(result), 
     contentType: 'text/plain; charset=UTF-8', 
     success:function(json){ 
       console.log(json);
-      getBalance();
+      var minus = ShowBalance - amount;
+      var newetherprice = minus / 1000000000000000000;
+      console.log(newetherprice);
+      document.getElementById("accbal").innerHTML = newetherprice;
+      ShowBalance = minus;
       sethistory();
+      document.getElementById("sendtrform").style.display = "none";
+
     }, 
     error: function() { 
     alert("Error"); 
     } 
     }); 
-    } 
-    doAjax(); 
-    }
+}
 
+
+ 
 function EncryptKeys(){
 
     const key2 = crypto.randomBytes(32);
@@ -22504,8 +22512,8 @@ function getNonce(to,amount,inputhex) {
       var data = JSON.parse(this.response);
       if (request.status >= 200 && request.status < 400) {
         nonce = data.Nonce;
-        signTransaction(to,amount,inputhex,nonce);
-        getBalance();
+        var result = signTransaction(to,amount,inputhex,nonce);
+        sendTransactionBroadcast(result,amount);
       } else {
         console.log('error');
       }
@@ -22516,38 +22524,22 @@ function getNonce(to,amount,inputhex) {
 }
 
 function getBalance() {
-  /*
-    var request = new XMLHttpRequest();
-    request.open('GET', 'http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac', true);
-    request.onload = function () {
-      var data = JSON.parse(this.response);
-      if (request.status >= 200 && request.status < 400) {
-        var bal = data.Balance;
-        var etherprice = bal / 1000000000000000000;
-        document.getElementById("accbal").innerHTML = etherprice;
-        alert(etherprice);
-        sethistory();
-      } else {
-        console.log('error');
-      }
-    }
-    // Send request
-    request.send(null);
-    */
 
     $.ajax({ 
       type : "GET", 
+      async: true,
       url : "http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac",   
       contentType: 'text/plain; charset=UTF-8', 
       success:function(data){ 
         console.log(data);
         var data1 = JSON.parse(data);
-        var bal = data1.Balance;
-        bal = parseFloat(bal);
-        var etherprice = bal / 1000000000000000000;
+        ShowBalance = data1.Balance;
+        console.log(ShowBalance);
+        
+        ShowBalance = parseFloat(ShowBalance);
+        var etherprice = ShowBalance / 1000000000000000000;
         document.getElementById("accbal").innerHTML = String(etherprice);
-        //alert(etherprice);
-        sethistory();
+        console.log(etherprice);
       }, 
       error: function() { 
       alert("Error"); 
@@ -22558,6 +22550,7 @@ function getBalance() {
 
 window.addEventListener('load', function load(event){
     getBalance();
+    
     var createButton = document.getElementById('send');
     createButton.addEventListener('click', function() { 
        var to = document.getElementById('inputto').value;
@@ -22567,12 +22560,9 @@ window.addEventListener('load', function load(event){
        amount = amount*Math.pow(10, 18);
        amount = String(amount);
        getNonce(to,amount,inputhex);
-       //signTransaction(to,amount,inputhex);
-       //getBalance();
     });
     
 });
-
 
 function sethistory(){
 
@@ -22597,9 +22587,6 @@ function sethistory(){
         
         $('#historylist').append(a);
     }
-    
-    
-
 }
 
 
