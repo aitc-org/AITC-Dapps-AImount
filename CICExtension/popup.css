@@ -495,6 +495,29 @@ body{
         border-bottom: 1px solid #d2d8dd;
         align-items: center;
     }
-   
-   
-   
+
+    .loginbutton{
+       
+        font-weight: 500;
+        font-family: Roboto, Arial;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        border-radius: 6px;
+        width: 136px;
+        height: 70px;
+        background-color: transparent;
+    }
+    .savePKbutton{
+        background-color: #999!important;
+        border-color: #999!important;
+    }
+
+    .textaligncenter{
+        text-align: center;
+    }
+
+    .btn-default:hover {
+        background-color: ghostwhite;
+    }

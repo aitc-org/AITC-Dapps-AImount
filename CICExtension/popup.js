@@ -9,6 +9,23 @@ $(document).ready(function() {
     document.getElementById('inputamount').value = "";
     document.getElementById('inputhex').value = "";
   });
+
+  if (typeof(Storage) !== "undefined") {
+    let sharedData;
+    if (!(localStorage.getItem("sharedData") === null)) {
+      $("#sendtr").click();
+      sharedData = localStorage.sharedData;
+      console.log(localStorage.sharedData);
+      var data = sharedData.split(',');
+      console.log(data[0]);
+      $("#inputto").val(data[0].trim());
+      $("#inputamount").val(data[1].trim());
+      $("#inputhex").val(data[2].trim());
+      delete localStorage.sharedData;
+      console.log(localStorage.sharedData);
+    }
+   
+  }
  });
 
  
@@ -30,7 +47,7 @@ function getBalanceandNonce() {
     }
     request.send(null);
     return nonce;
-  }
+}
 
 
 function signTransaction(){
@@ -61,9 +78,9 @@ function signTransaction(){
           }
       
         });
-  }
+}
   
-  function sendBroadcast(){ 
+function sendBroadcast(){ 
     var jdata = { 
     "blockHash": "", 
     "tx": "f242d0b59d204cf46cdbecbd04edc0a95ac2c4bbf56621058072a6d282aea789", 
@@ -105,4 +122,6 @@ function signTransaction(){
     }); 
     } 
     doAjax(); 
-  }
+}
+
+  

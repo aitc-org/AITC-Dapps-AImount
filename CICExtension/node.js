@@ -1,17 +1,25 @@
 const crypto = require('crypto');
-const sdag = require('sdagsign');
+const sdag = require('sdagraph');
 
 var nonce;
 var settransactionlocal;
 var a = "";
 var ShowBalance;
-//Create account
-const pri = '9cecb7cdec34ba8d27039781fd4d5e0bd0b9aa233c49aa75588bf7d2ba71536a';
-let account = new sdag.Accounts.NewAccount(pri)
-//console.log('Private Key: '+account.GeneratePrivateKey("1123"));
-console.log('Address: '+account.Address);
-console.log('Public Key:'+account.PublicKey);
 
+//Create account
+var pri = '9cecb7cdec34ba8d27039781fd4d5e0bd0b9aa233c49aa75588bf7d2ba71536a';
+//let account = new sdag.Accounts.NewAccount(pri)
+//console.log('Private Key: '+account.GeneratePrivateKey("1123"));
+//console.log('Address: '+account.Address);
+//console.log('Public Key:'+account.PublicKey);
+
+if (!(localStorage.getItem("PK") === null)) {
+  pri = localStorage.PK;
+  let account = new sdag.Accounts.NewAccount(pri)
+  console.log("PK Address:"+account.Address)
+}
+
+/*
 if (typeof(Storage) !== "undefined") {
     //localStorage.privatekey = account.GeneratePrivateKey("1123");
     localStorage.address = account.Address;
@@ -19,19 +27,24 @@ if (typeof(Storage) !== "undefined") {
 } else {
     console.log('Sorry! No Web Storage support..');
 }
+*/
 
 function signTransaction(to,amount,inputhex,nonce){
     //nonce = getNonce();
     //console.log(nonce);
+    var pk;
+    if (!(localStorage.getItem("PK") === null)) {
+      pk = localStorage.PK;
+    }
     if(nonce!== undefined){
       //Create transaction tx.
       tx = {
       To : to,
-      PrivateKey : pri,
+      PrivateKey : pk,
       Balance : amount,
       Nonce : String(nonce),
       Gas : "1",
-      Type : "a64",
+      Type : "a66",
       Input : inputhex
     }  
     let transaction = new sdag.Signs.NewTransaction(pri,tx)
@@ -39,13 +52,11 @@ function signTransaction(to,amount,inputhex,nonce){
     var signtrans = transaction.GetSignRawHexFull();
     var result = signtrans.result;
     console.log(result);
-    localStorage.ls_to = to;
-    localStorage.ls_amount = amount;
     return result;
     }
 }
 
-function sendTransactionBroadcast(result,amount){ 
+function sendTransactionBroadcast(result,to,amount){ 
     $.ajax({ 
     type : "POST", 
     async: true,
@@ -60,10 +71,29 @@ function sendTransactionBroadcast(result,amount){
       console.log(newetherprice);
       document.getElementById("accbal").innerHTML = newetherprice;
       ShowBalance = minus;
-      nonce = nonce + 1;
-      sethistory();
+      nonce = nonce + 1; //This is only for demo.
+      
       document.getElementById("sendtrform").style.display = "none";
       console.log('new nonce:'+nonce);
+
+      localStorage.ls_to = to;
+      localStorage.ls_amount = amount;
+
+      sethistory();
+
+      //Close cic popup window if it is opened from Image webpage otherwise not.
+      if (typeof(Storage) !== "undefined") {
+        let openwindow;
+        if (!(localStorage.getItem("openwindow") === null)) {
+          console.log(localStorage.openwindow);
+          openwindow = localStorage.openwindow;
+          if(openwindow == 1){
+            setTimeout(function(){ window.close(); }, 2000); 
+          } 
+          delete localStorage.openwindow;
+        }
+      }
+      
     }, 
     error: function() { 
     alert("Error"); 
@@ -112,7 +142,7 @@ function getNonce(to,amount,inputhex) {
    //This is only for demo.
    console.log('nonce:'+nonce);
    var result = signTransaction(to,amount,inputhex,nonce);
-   sendTransactionBroadcast(result,amount);
+   sendTransactionBroadcast(result,to,amount);
 }
 
 function getBalance() {
@@ -156,7 +186,6 @@ window.addEventListener('load', function load(event){
        amount = String(amount);
        getNonce(to,amount,inputhex);
     });
-    
 });
 
 function sethistory(){
@@ -180,7 +209,7 @@ function sethistory(){
         a += '<div class="item4"><span class="transaction-status--confirmed">'+status+'</span></div>';
         a += '</div>';
         
-        $('#historylist').append(a);
+        $('#historylist').prepend(a);
     }
 }
 

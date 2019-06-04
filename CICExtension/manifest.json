@@ -7,12 +7,21 @@
   
   "browser_action": {
    "default_icon": "Image/CI_logo-01.png",
-   "default_popup": "popup.html"
+   "default_popup": "login.html"
   },
   "icons": { "16": "Image/CI_logo-01.png",
     "48": "Image/CI_logo-01.png",
    "128": "Image/CI_logo-01.png" 
   },
+  "background":{
+    "scripts": ["background.js"]
+  },
+  "externally_connectable": {
+    "matches": ["http://127.0.0.1:5500/main.html"]
+  },
+  "web_accessible_resources": [
+    "popup.js", "background.js"
+    ],
   "permissions": [
    "activeTab"
    ]
