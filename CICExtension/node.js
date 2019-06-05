@@ -7,27 +7,8 @@ var a = "";
 var ShowBalance;
 
 //Create account
-var pri = '9cecb7cdec34ba8d27039781fd4d5e0bd0b9aa233c49aa75588bf7d2ba71536a';
-//let account = new sdag.Accounts.NewAccount(pri)
-//console.log('Private Key: '+account.GeneratePrivateKey("1123"));
-//console.log('Address: '+account.Address);
-//console.log('Public Key:'+account.PublicKey);
+var pri = "";
 
-if (!(localStorage.getItem("PK") === null)) {
-  pri = localStorage.PK;
-  let account = new sdag.Accounts.NewAccount(pri)
-  console.log("PK Address:"+account.Address)
-}
-
-/*
-if (typeof(Storage) !== "undefined") {
-    //localStorage.privatekey = account.GeneratePrivateKey("1123");
-    localStorage.address = account.Address;
-    localStorage.publickey = account.PublicKey;
-} else {
-    console.log('Sorry! No Web Storage support..');
-}
-*/
 
 function signTransaction(to,amount,inputhex,nonce){
     //nonce = getNonce();
@@ -147,10 +128,16 @@ function getNonce(to,amount,inputhex) {
 
 function getBalance() {
 
-    $.ajax({ 
+  var PKaddress;
+  if (!(localStorage.getItem("PKaddress") === null)) {
+    PKaddress = localStorage.PKaddress;
+  }
+
+  $.ajax({ 
       type : "GET", 
       async: true,
-      url : "http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac",   
+      url : "http://192.168.51.212:9999/getAccount?address="+PKaddress,
+      //url : "http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac",   
       contentType: 'text/plain; charset=UTF-8', 
       success:function(data){ 
         console.log(data);
@@ -160,33 +147,75 @@ function getBalance() {
         console.log(ShowBalance);
         console.log('api nonce:'+nonce);
         
-        ShowBalance = parseFloat(ShowBalance);
-        var etherprice = ShowBalance / 1000000000000000000;
-        document.getElementById("accbal").innerHTML = String(etherprice);
-        console.log(etherprice);
+        if(ShowBalance!=""){
+          ShowBalance = parseFloat(ShowBalance);
+          var etherprice = ShowBalance / 1000000000000000000;
+          document.getElementById("accbal").innerHTML = String(etherprice);
+          console.log(etherprice);
+        }
+        else{
+          document.getElementById("accbal").innerHTML = "0";
+        }
+        
         sethistory();
       }, 
       error: function() { 
       alert("Error"); 
       } 
-      }); 
+  }); 
 }
 
 
 window.addEventListener('load', function load(event){
-    getBalance();
+
+  if (!(localStorage.getItem("PK") === null)) {
+    pri = localStorage.PK;
+    let account = new sdag.Accounts.NewAccount(pri);
+    console.log("PK Address:"+account.Address);
+    localStorage.PKaddress = account.Address;
+  }
+  
+  getBalance();
     
-    var createButton = document.getElementById('send');
-    createButton.addEventListener('click', function() { 
-       var to = document.getElementById('inputto').value;
-       var amount = document.getElementById('inputamount').value;
-       var inputhex = document.getElementById('inputhex').value;
-       amount = parseFloat(amount);
-       amount = amount*Math.pow(10, 18);
-       amount = String(amount);
-       getNonce(to,amount,inputhex);
+  var createButton = document.getElementById('send');
+  createButton.addEventListener('click', function() { 
+       var to = document.getElementById('inputto').value.trim();
+       var amount = document.getElementById('inputamount').value.trim();
+       var inputhex = document.getElementById('inputhex').value.trim();
+
+       if((to.length!=0) && (amount.length!=0) && (inputhex.length!=0)){
+        var regexp = /^[0-9a-fA-F]+$/;  //regex to check hex value
+        if((regexp.test(to)) && (regexp.test(inputhex))){
+          amount = parseFloat(amount);
+          amount = amount*Math.pow(10, 18);
+          amount = String(amount);
+          getNonce(to,amount,inputhex);
+        }
+        else{
+          console.log('invalid hex');
+        }
+       }
+  });
+
+  var creatediv = document.getElementById('clk_logout');
+  creatediv.addEventListener('click', function() { 
+    localStorage.clear();
+    chrome.browserAction.setPopup({
+      popup:"login.html"
     });
-});
+    window.location.href = 'login.html';
+  });
+
+  $('#inputamount').keypress(function(event) {
+    if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
+            $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+        event.preventDefault();
+    }
+  }).on('paste', function(event) {
+    event.preventDefault();
+  });
+
+  });
 
 function sethistory(){
 
@@ -212,6 +241,8 @@ function sethistory(){
         $('#historylist').prepend(a);
     }
 }
+
+
 
 
 

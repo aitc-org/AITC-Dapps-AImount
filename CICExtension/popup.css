@@ -496,6 +496,36 @@ body{
         align-items: center;
     }
 
+    .account-menu__icon {
+        margin-left: 20px;
+        cursor: pointer;
+    }
+    .identicon {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .menu__item {
+        padding: 18px;
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        position: relative;
+        z-index: 201;
+        cursor: pointer;
+    }
+    .menu__item__icon {
+        height: 16px;
+        width: 16px;
+        margin-right: 14px;
+    }
+    .account-menu__item-icon {
+        width: 16px;
+        height: 16px;
+    }
+
     .loginbutton{
        
         font-weight: 500;

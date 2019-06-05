@@ -3,11 +3,16 @@ $(document).ready(function() {
     $('#nodepopup').toggle();
   });
 
+  $('#settingdropdown').click(function(){
+    $('#settingspopup').toggle();
+  });
+
   $('#sendtr').click(function(){
     $('#sendtrform').toggle();
     document.getElementById('inputto').value = "";
     document.getElementById('inputamount').value = "";
     document.getElementById('inputhex').value = "";
+    $('#inputto').focus();
   });
 
   if (typeof(Storage) !== "undefined") {
@@ -123,5 +128,7 @@ function sendBroadcast(){
     } 
     doAjax(); 
 }
+
+
 
   
