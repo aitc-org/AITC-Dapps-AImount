@@ -1,5 +1,7 @@
 const crypto = require('crypto');
 const sdag = require('sdagraph');
+var aesjs = require('aes-js');
+
 
 var nonce;
 var settransactionlocal;
@@ -15,7 +17,8 @@ function signTransaction(to,amount,inputhex,nonce){
     //console.log(nonce);
     var pk;
     if (!(localStorage.getItem("PK") === null)) {
-      pk = localStorage.PK;
+      //pk = localStorage.PK;
+      pk = DecryptPrivateKey(localStorage.PK);
     }
     if(nonce!== undefined){
       //Create transaction tx.
@@ -83,23 +86,20 @@ function sendTransactionBroadcast(result,to,amount){
 }
 
 
- 
-function EncryptKeys(){
-
-    const key2 = crypto.randomBytes(32);
-    console.log(key2.length);
-    //const iv = crypto.randomBytes(16);
-
-    const algorithm = 'aes-256-cbc';
-    const key = Buffer.from('99b580475dcadbdbf24d1cadd042def3');
-    //const key = crypto.scryptSync(localStorage.privatekey, 'salt', 24);
-    const iv = Buffer.alloc(16, 0); // Initialization vector.
-    console.log(iv);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    
-    let encrypted = cipher.update(localStorage.privatekey, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    console.log(encrypted);
+function DecryptPrivateKey(encryptedHex){
+  var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+  // When ready to decrypt the hex string, convert it back to bytes
+  var encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex);
+  
+  // The counter mode of operation maintains internal state, so to
+  // decrypt a new instance must be instantiated.
+  var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+  var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+  
+  // Convert our bytes back into text
+  var decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
+  console.log(decryptedText);
+  return decryptedText;
 }
 
 function getNonce(to,amount,inputhex) {
@@ -132,7 +132,7 @@ function getBalance() {
   if (!(localStorage.getItem("PKaddress") === null)) {
     PKaddress = localStorage.PKaddress;
   }
-
+  if(PKaddress != ""){
   $.ajax({ 
       type : "GET", 
       async: true,
@@ -164,12 +164,15 @@ function getBalance() {
       } 
   }); 
 }
+}
 
 
 window.addEventListener('load', function load(event){
 
+
   if (!(localStorage.getItem("PK") === null)) {
-    pri = localStorage.PK;
+    pri = DecryptPrivateKey(localStorage.PK);
+    //pri = localStorage.PK;
     let account = new sdag.Accounts.NewAccount(pri);
     console.log("PK Address:"+account.Address);
     localStorage.PKaddress = account.Address;
@@ -185,7 +188,7 @@ window.addEventListener('load', function load(event){
 
        if((to.length!=0) && (amount.length!=0) && (inputhex.length!=0)){
         var regexp = /^[0-9a-fA-F]+$/;  //regex to check hex value
-        if((regexp.test(to)) && (regexp.test(inputhex))){
+        if((to.length == 40) && (regexp.test(to)) && (regexp.test(inputhex))){
           amount = parseFloat(amount);
           amount = amount*Math.pow(10, 18);
           amount = String(amount);
@@ -206,6 +209,7 @@ window.addEventListener('load', function load(event){
     window.location.href = 'login.html';
   });
 
+  //Allow only numbers and "." in textbox. 
   $('#inputamount').keypress(function(event) {
     if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
             $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {

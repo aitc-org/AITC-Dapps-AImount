@@ -17,8 +17,9 @@ $(document).ready(function() {
         else{
             $('#btnsavePK').prop('disabled', true);
         }
-      });
+    });
 
+    /*
     $('#btnsavePK').click(function(){
         
         var PK = $('#inputPK').val().trim();
@@ -27,5 +28,5 @@ $(document).ready(function() {
         popup:"popup.html"
         });
         window.location.href = 'popup.html';
-    });
+    });*/
 });
