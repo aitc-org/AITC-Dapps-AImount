@@ -551,3 +551,23 @@ body{
     .btn-default:hover {
         background-color: ghostwhite;
     }
+
+    .private-key-password-display-textarea {
+        color: #e91550;
+        font-family: Roboto;
+        font-size: 14px;
+        line-height: 21px;
+        border: none;
+        height: 75px;
+        width: 100%;
+        overflow: hidden;
+        resize: none;
+        padding: 9px 13px 8px;
+        text-transform: uppercase;
+    }
+    .private-key-password-label, .private-key-password-error {
+        color: white;
+        font-size: 14px;
+        line-height: 18px;
+        margin-bottom: 10px;
+    }

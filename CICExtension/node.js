@@ -219,6 +219,19 @@ window.addEventListener('load', function load(event){
     event.preventDefault();
   });
 
+  var showPKdiv = document.getElementById('div_show_PK');
+  showPKdiv.addEventListener('click', function() { 
+    if (!(localStorage.getItem("PK") === null)) {
+      var PK = DecryptPrivateKey(localStorage.PK);
+      document.getElementById('showPkdiv').style.display = "block";
+      document.getElementById('span_showPK').innerHTML = PK;
+    }
+  });
+
+  $('#span_showPK').click(function(event) {
+    this.select();
+    document.execCommand("copy");
+  });
   });
 
 function sethistory(){

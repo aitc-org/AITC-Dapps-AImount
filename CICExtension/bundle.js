@@ -33102,26 +33102,6 @@ function sendTransactionBroadcast(result,to,amount){
 }
 
 
- 
-function EncryptPrivateKey(){
-
-  var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
-
-  // Convert text to bytes
-  var text = 'eee21c84089ca7515d476a389f537d86edc80eb2c7b9d60c0c77d16ff40d2c87';
-  var textBytes = aesjs.utils.utf8.toBytes(text);
-  
-  // The counter is optional, and if omitted will begin at 1
-  var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
-  var encryptedBytes = aesCtr.encrypt(textBytes);
-  
-  // To print or store the binary data, you may convert it to hex
-  var encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
-  console.log(encryptedHex);
-  // "a338eda3874ed884b6199150d36f49988c90f5c47fe7792b0cf8c7f77eeffd87
-  //  ea145b73e82aefcf2076f881c88879e4e25b1d7b24ba2788"
-}
-
 function DecryptPrivateKey(encryptedHex){
   var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
   // When ready to decrypt the hex string, convert it back to bytes
@@ -33253,6 +33233,20 @@ window.addEventListener('load', function load(event){
     }
   }).on('paste', function(event) {
     event.preventDefault();
+  });
+
+  var showPKdiv = document.getElementById('div_show_PK');
+  showPKdiv.addEventListener('click', function() { 
+    if (!(localStorage.getItem("PK") === null)) {
+      var PK = DecryptPrivateKey(localStorage.PK);
+      document.getElementById('showPkdiv').style.display = "block";
+      document.getElementById('span_showPK').innerHTML = PK;
+    }
+  });
+
+  $('#span_showPK').click(function(event) {
+    this.select();
+    document.execCommand("copy");
   });
 
   });
