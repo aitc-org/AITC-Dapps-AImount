@@ -7,6 +7,11 @@ $(document).ready(function() {
     $('#settingspopup').toggle();
   });
 
+  $('#div_add_token').click(function(){
+    document.getElementById("settingspopup").style.display = "none";
+    document.getElementById("addtokenform").style.display = "block";
+  });
+
   $('#sendtr').click(function(){
     $('#sendtrform').toggle();
     document.getElementById('inputto').value = "";

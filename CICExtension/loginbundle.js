@@ -13,13 +13,30 @@ window.addEventListener('load', function load(event){
         popup:"popup.html"
         });
         window.location.href = 'popup.html';
-        
   });
 });
 
 function EncryptPrivateKey(PrivateKey){
 
-    var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+  var arr;
+
+  if (!(localStorage.getItem("password") === null)) {
+    var password = localStorage.password;
+    var passwordtohex = toHex(password);
+    var hextodec = hextodecimal(passwordtohex);
+    console.log('password to hex: '+password);
+    console.log('hex to int '+ hextodec);
+    var subStr = hextodec.toString().substr(0, 16);
+    console.log(subStr);
+    arr = subStr.toString(10).split('').map(Number);
+    for(i=0;i<arr.length;i++){
+      arr[i] = +arr[i]|0 ;
+    } 
+  }
+
+    //var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+    var key = arr;
+    localStorage.setItem("quentinTarantino", JSON.stringify(key));
   
     // Convert text to bytes
     var text = PrivateKey;
@@ -50,6 +67,45 @@ function EncryptPrivateKey(PrivateKey){
     console.log(decryptedText);
     return decryptedText;
   }
+
+  //convert string into hex function
+  function toHex(str) {
+    var hex = '';
+    var i = 0;
+    while(str.length > i) {
+        hex += ''+str.charCodeAt(i).toString(16);
+        i++;
+    }
+    return hex;
+}
+
+//convert hex into decimal function
+function hextodecimal(s) {
+
+  function add(x, y) {
+      var c = 0, r = [];
+      var x = x.split('').map(Number);
+      var y = y.split('').map(Number);
+      while(x.length || y.length) {
+          var s = (x.pop() || 0) + (y.pop() || 0) + c;
+          r.unshift(s < 10 ? s : s - 10); 
+          c = s < 10 ? 0 : 1;
+      }
+      if(c) r.unshift(c);
+      return r.join('');
+  }
+
+  var dec = '0';
+  s.split('').forEach(function(chr) {
+      var n = parseInt(chr, 16);
+      for(var t = 8; t; t >>= 1) {
+          dec = add(dec, dec);
+          if(n & t) dec = add(dec, '1');
+      }
+  });
+  return dec;
+}
+
 },{"aes-js":2}],2:[function(require,module,exports){
 /*! MIT License. Copyright 2015-2018 Richard Moore <me@ricmoo.com>. See LICENSE.txt. */
 (function(root) {

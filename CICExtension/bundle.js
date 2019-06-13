@@ -33103,7 +33103,13 @@ function sendTransactionBroadcast(result,to,amount){
 
 
 function DecryptPrivateKey(encryptedHex){
-  var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+  var key;
+
+  if (!(localStorage.getItem("quentinTarantino") === null)) {
+    var retrievedData = localStorage.getItem("quentinTarantino");
+    key = JSON.parse(retrievedData);
+  }
+  //var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
   // When ready to decrypt the hex string, convert it back to bytes
   var encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex);
   
@@ -33235,20 +33241,69 @@ window.addEventListener('load', function load(event){
     event.preventDefault();
   });
 
-  var showPKdiv = document.getElementById('div_show_PK');
-  showPKdiv.addEventListener('click', function() { 
-    if (!(localStorage.getItem("PK") === null)) {
-      var PK = DecryptPrivateKey(localStorage.PK);
-      document.getElementById('showPkdiv').style.display = "block";
-      document.getElementById('span_showPK').innerHTML = PK;
+  var enterPKdiv = document.getElementById('div_show_PK');
+  enterPKdiv.addEventListener('click', function() { 
+    document.getElementById('enterseeddiv').style.display = "block";
+    document.getElementById('showPkdiv').style.display = "none";
+    $('#txt_enterseed').focus();
+  });
+
+  var btncancelexport = document.getElementById('exportPK_cancel');
+  btncancelexport.addEventListener('click', function() { 
+    document.getElementById('txt_enterseed').value = "";
+    document.getElementById('exportPK_confirm').disabled = true;
+    document.getElementById('enterseeddiv').style.display = "none";
+    $('#lbl_exporterror').html("").css('color', 'red');
+  });
+
+  $("#txt_enterseed").on('keyup', function() {
+    if(this.value != ""){
+        var words = this.value.match(/\S+/g).length;
+        if (words > 12) {
+            var trimmed = $(this).val().split(/\s+/, 12).join(" ");
+            $(this).val(trimmed + " ");
+        }
+        else if(words == 12) {
+          document.getElementById('exportPK_confirm').disabled = false;
+        }
+        else{
+          document.getElementById('exportPK_confirm').disabled = true;
+        }
     }
+    $('#lbl_exporterror').html("").css('color', 'red');
+});
+
+  var showPKdiv = document.getElementById('exportPK_confirm');
+  showPKdiv.addEventListener('click', function() { 
+    if (!(localStorage.getItem("seedphrase") === null)) {
+      var seedphrase = localStorage.seedphrase;
+      var checkseedphrase = document.getElementById('txt_enterseed').value.trim();
+      seedphrase = seedphrase.replace(/\s/g, "");
+      checkseedphrase = checkseedphrase.replace(/\s/g, "");
+      if(checkseedphrase == seedphrase){
+        if (!(localStorage.getItem("PK") === null)) {
+          var PK = DecryptPrivateKey(localStorage.PK);
+          document.getElementById('showPkdiv').style.display = "block";
+          document.getElementById('span_showPK').innerHTML = PK;
+    
+          document.getElementById('txt_enterseed').value = "";
+          document.getElementById('exportPK_confirm').disabled = true;
+          document.getElementById('enterseeddiv').style.display = "none";
+        }
+        $('#lbl_exporterror').html("").css('color', 'red');
+      }
+      else{
+        //document.getElementById('lbl_exporterror').innerHTML = "Incorrect seed phrase";
+        $('#lbl_exporterror').html("Incorrect seed phrase").css('color', 'red');
+      }
+    }
+    
   });
 
   $('#span_showPK').click(function(event) {
     this.select();
     document.execCommand("copy");
   });
-
   });
 
 function sethistory(){
