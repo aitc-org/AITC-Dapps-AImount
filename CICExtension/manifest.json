@@ -17,7 +17,7 @@
     "scripts": ["background.js"]
   },
   "externally_connectable": {
-    "matches": ["http://127.0.0.1:5500/main.html"]
+    "matches": ["http://127.0.0.1:5501/main.html"]
   },
   "web_accessible_resources": [
     "popup.js", "background.js"

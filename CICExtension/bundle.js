@@ -33191,15 +33191,13 @@ function getBalance() {
 
 window.addEventListener('load', function load(event){
 
-
   if (!(localStorage.getItem("PK") === null)) {
     pri = DecryptPrivateKey(localStorage.PK);
-    //pri = localStorage.PK;
-    let account = new sdag.Accounts.NewAccount(pri);
-    console.log("PK Address:"+account.Address);
-    localStorage.PKaddress = account.Address;
+    let account2 = new sdag.Accounts.NewAccount(pri);
+    console.log("PK",pri);
+    console.log("PK Address:",account2.Address);
+    localStorage.PKaddress = account2.Address;
   }
-  
   getBalance();
     
   var createButton = document.getElementById('send');
@@ -33224,7 +33222,10 @@ window.addEventListener('load', function load(event){
 
   var creatediv = document.getElementById('clk_logout');
   creatediv.addEventListener('click', function() { 
+    var password = localStorage.getItem('password');
     localStorage.clear();
+    localStorage.setItem('password',password);
+    
     chrome.browserAction.setPopup({
       popup:"login.html"
     });

@@ -4,6 +4,10 @@ body{
     background-color: black;
 }
 
+.fullwidth{
+    width: 100%;
+}
+
 #app-content {
     overflow-x: hidden;
     height: 100%;
@@ -608,9 +612,11 @@ body{
         padding: 12px;
     }
     .first-time-flow__button {
-        margin: 10px 0;
-        width: 100px;
+        margin: 10px;
+        width: 80px;
         height: 40px;
+        font-size: 1.3rem;
+        margin-left: 0px;
     }
 
     .lbl_passerror{
@@ -633,3 +639,59 @@ body{
     .btn-secondary:hover {
         border-color: #037DD6;
     }
+    .imprtwalletoption{
+        border: 1px solid #adadad;
+        border-radius: 6px;
+    }
+    .imprtwalletoption:hover {
+        border: 2px solid #4d4d4d;
+    }
+
+    .seedgrid{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        margin-bottom: 20px;
+        grid-column-gap: 20px;
+        grid-row-gap: 20px;
+        padding: 0px;
+    }
+
+    .first-time-flow__textarea-wrapper ul li{
+        color: rgb(153, 153, 153);
+        font-size: 14px;
+        border-bottom: 1px solid rgb(224, 224, 224);
+        padding: 10px 0px;
+        list-style-type: none;
+    }
+
+    .first-time-flow__textarea-wrapper ul li span {
+        color: rgb(0, 57, 69);
+        margin-left: 10px;
+    }
+
+    @media (min-width: 1025px){
+        .seedgrid{
+            margin: 0px;
+            padding: 0px;
+        }
+        .first-time-flow__textarea-wrapper ul li{
+            list-style-type: none;
+        }
+        ul li{
+            list-style-type: none;
+        }
+    }
+
+    .loginpassword{
+        width: 100%;
+        height: 40px;
+        font-size: 1.6rem;
+    }
+
+    
+
+    
+
+    
+    
+    

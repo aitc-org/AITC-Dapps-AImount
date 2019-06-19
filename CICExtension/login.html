@@ -11,6 +11,7 @@
             <script src="loginbundle.js"></script>
             <link rel="stylesheet" href="popup.css" type="text/css">
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+            <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     </head>
     <body>
             <div id="app-content">
@@ -73,8 +74,8 @@
                                           <div class title="" style="display: inline;">
                                             <div class="transaction-view-balance__balance">
                                               <div class="transaction-view-balance__buttons" style="padding:5px">
-                                                <button class="loginbutton btn-default transaction-view-balance__button" id="dep">Create Wallet</button>
-                                                <button class="loginbutton btn-default transaction-view-balance__button" style="margin-left:5px;" id="importPK">Import Wallet</button>
+                                                <button class="loginbutton btn-default transaction-view-balance__button" id="btn_createwallet">Create Wallet</button>
+                                                <button class="loginbutton btn-default transaction-view-balance__button" style="margin-left:5px;" id="btn_importwallet">Import Wallet</button>
                                               </div>
                                             </div>
                                           </div>
@@ -82,26 +83,128 @@
                                       </div>
                                     </div>
                                   </div>
+                                  <div class="transaction-list" id="importwalletoptions" style="display:none;">
+                                      <div class="page-container" style="margin-left:3px;">
+                                          <div class="page-container__header">
+                                          <div class="page-container__title">Access Wallet By</div>
+                                          </div>
+                                          <div class="page-container__header" style="border:none">
+                                              <div class="menu__item menu__item  menu__item--clickable imprtwalletoption" id="imprtwalletoption_seedphrase">
+            
+                                                  <div class="menu__item__icon">
+                                                      <i class="fas fa-file-alt" aria-hidden="true"></i>
+                                                  </div>
+                                                  <div class="menu__item__text">Mnemonic Phrase</div>
+                                               
+                                                </div>
+                                          </div>
+                                          <div class="page-container__header" style="border:none">
+                                              <div class="menu__item menu__item  menu__item--clickable imprtwalletoption" id="imprtwalletoption_privatekey">
+            
+                                                  <div class="menu__item__icon">
+                                                      <i class="fa fa-key" aria-hidden="true"></i>
+                                                  </div>
+                                                  <div class="menu__item__text">Private Key</div>
+                                               
+                                                </div>
+                                          </div>
+                                          
+                                      </div>
+                                  </div>
                                   <div class="transaction-list" id="enterPKform" style="display:none;">
                                         <div class="page-container" style="margin-left:3px;">
                                             <div class="page-container__header">
-                                              <div class="page-container__title"></div>
-                                              <form style="color:#4d4d4d;">
-                                                  <div class="form-group row textaligncenter">
+                                              <div class="page-container__title">Access Wallet By Private Key</div>
+                                              <form style="color:#4d4d4d; margin-top: 15px;">
+                                                  <div class="form-group row">
                                                     <label for="staticEmail" class="col-sm-2 col-form-label">Private Key</label>
                                                     <div class="col-sm-10">
                                                         <textarea type="text" rows="2" class="form-control" id="inputPK" placeholder="Enter private key" autocomplete="off"></textarea>
                                                     </div>
                                                   </div>
-                                                  <div class="textaligncenter">
-                                                    <button type="button" class="btn btn-primary savePKbutton" id="btnsavePK" disabled>Access Wallet</button>
+                                                  <div class="">
+                                                      <button type="button" class="btn btn-primary savePKbutton" id="btncancelPK">Cancel</button>
+                                                    <button type="button" class="btn btn-primary savePKbutton" id="btnsavePK" disabled>Confirm</button>
                                                   </div>
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>
                                   </div>
+                                  <div class="transaction-list" id="enterMnemonicform" style="display:none;">
+                                        <div class="page-container" style="margin-left:3px;">
+                                            <div class="page-container__header">
+                                              <div class="page-container__title">Access Wallet By Mnemonic Phrase</div>
+                                              <form class="first-time-flow__form">
+                                                  <div class="first-time-flow__header" style="font-size:inherit;">Enter your secret twelve word phrase here to restore your vault.</div>
+                                                  <div class="first-time-flow__textarea-wrapper">
+                                                      <label>Wallet Seed</label>
+                                                      <textarea class="first-time-flow__textarea" placeholder="Separate each word with a single space" id="txt_seedphrase"></textarea>
+                                                  </div>
+                                                  <div class="first-time-flow__textarea-wrapper">
+                                                      <label>Derive Path</label>
+                                                      <input type="text" class="first-time-flow__input" value="m/44'/0'/0'/0/0" id="txt_importwalletderivepath">
+                                                  </div>
+                                                  <div class="first-time-flow__textarea-wrapper">
+                                                      <label>Address</label>
+                                                      <span id="span_showaddress"></span>
+                                                  </div>
+                                                  <!--
+                                                  <div class="first-time-flow__textarea-wrapper">
+                                                          <label>Password (min 8 chars)</label>
+                                                          <input type="password" class="first-time-flow__input" id="importwalletpassword">
+                                                  </div>
+                                                 
+                                                  <div class="first-time-flow__textarea-wrapper">
+                                                          <label>Confirm Password</label>
+                                                          <input type="password" class="first-time-flow__input" id="confirmnewpassword1">
+                                                  </div>
+                                                  
+                                                  <div class="first-time-flow__textarea-wrapper">
+                                                      <span class="lbl_passerror" id="lbl_importwalletpassworderror"></span>
+                                                  </div>
+                                                  -->
+                                                  <button type="button" class="button btn-primary first-time-flow__button" id="btn_confirmimportwallet">Import</button>
+                                              </form>
+                                            </div>
+                                        </div>
+                                  </div>
+                                  <div class="transaction-list" id="CreateWallet" style="display:none;">
+                                        <div class="page-container" style="margin-left:3px;">
+                                            <div class="page-container__header">
+                                              <div class="page-container__title" style="margin-bottom:8px;">Get a New Wallet</div>
+                                              <div class="page-container__title" style="font-size:1.2rem;"><span style="color:red;">DO NOT FORGET </span>to save your Mnemonic Phrase and password.</div>
+                                              <form class="first-time-flow__form">
+                                                 
+                                                  <div class="first-time-flow__textarea-wrapper seed" id="ulseed">
+                                                     
+                                                  </div>
+                                                   <!--
+                                                  <div class="first-time-flow__textarea-wrapper">
+                                                          <label>Password (min 8 chars)</label>
+                                                          <input type="password" class="first-time-flow__input" id="newpassword">
+                                                  </div>
+                                                 
+                                                  <div class="first-time-flow__textarea-wrapper">
+                                                          <label>Confirm Password</label>
+                                                          <input type="password" class="first-time-flow__input" id="confirmnewpassword">
+                                                  </div>
+                                                  
+                                                  <div class="first-time-flow__textarea-wrapper">
+                                                          <span class="lbl_passerror" id="lbl_passworderror" style="color:red"></span>
+                                                  </div>
+                                                  -->
+                                                  
+                                              </form>
+                                              <div style="display:inline-flex">
+                                                  <button type="button" class="button btn-primary first-time-flow__button" style="margin:10px 0;" id="btn_cancelcreate">Cancel</button>
+                                                  <button type="button" class="button btn-primary first-time-flow__button" id="btn_confirmcreate">Create</button>
+                                              </div>
+                                            </div>
+                                        </div>
+                                  </div>
+                                  
                                 </div>
+                              </div>
                             </div>
                         </div>
                      
