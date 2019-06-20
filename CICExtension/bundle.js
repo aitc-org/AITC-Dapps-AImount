@@ -33176,6 +33176,7 @@ function getBalance() {
           console.log(etherprice);
         }
         else{
+          ShowBalance = 0;
           document.getElementById("accbal").innerHTML = "0";
         }
         
@@ -33225,7 +33226,7 @@ window.addEventListener('load', function load(event){
     var password = localStorage.getItem('password');
     localStorage.clear();
     localStorage.setItem('password',password);
-    
+
     chrome.browserAction.setPopup({
       popup:"login.html"
     });

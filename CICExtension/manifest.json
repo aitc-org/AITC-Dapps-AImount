@@ -23,6 +23,6 @@
     "popup.js", "background.js"
     ],
   "permissions": [
-   "activeTab"
+   "activeTab","http://127.0.0.1:5501/main.html","tabs"
    ]
 }
