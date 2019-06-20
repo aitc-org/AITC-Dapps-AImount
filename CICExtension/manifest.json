@@ -17,12 +17,12 @@
     "scripts": ["background.js"]
   },
   "externally_connectable": {
-    "matches": ["http://127.0.0.1:5501/main.html"]
+    "matches": ["http://127.0.0.1:5501/main.html","http://13.75.117.140:3000/main.html"]
   },
   "web_accessible_resources": [
     "popup.js", "background.js"
     ],
   "permissions": [
-   "activeTab","http://127.0.0.1:5501/main.html","tabs"
+   "activeTab","http://127.0.0.1:5501/main.html","http://13.75.117.140:3000/main.html","tabs"
    ]
 }
