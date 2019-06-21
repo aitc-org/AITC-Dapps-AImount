@@ -683,9 +683,9 @@ body{
     }
 
     .loginpassword{
-        width: 100%;
+        width: fit-content;
         height: 40px;
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
 
     

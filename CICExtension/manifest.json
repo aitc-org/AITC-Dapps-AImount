@@ -24,6 +24,5 @@
     ],
   "permissions": [
    "activeTab","http://127.0.0.1:5501/main.html","http://13.75.117.140:3000/main.html","tabs"
-   ],
-   "key":"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnbVfWsPKwQZ0NUK3BqfloQbo2dyHj7qxrXeksDAlyMAD1H7UrUxC4kPB8EW9qLG7pExuS4F+6fQZTvpgk/LwSo7rLu0JuxMVY0H/PrssKDWQhYaFDowyqqMbrMHsNqNNUwxqp/hoEKtqZmii+DtDOgQevE+c+zBep09peYj8NkS7+1SsYOZP0EtmUy00NRunRwHB5wSUPJ3hCb+iGwPwcNQBWG3FXDIMwF9punDkJXBmNqTnFBvpMT1qgIVwgjju0iiik9D5WSlyGrMHbYHj6Xi2Ei3JNjN7EduJDsi3//uF5T5iOin6xNYa5Q4bMqPM2rGEXxnEc4k8SkJg4OrPQwIDAQAB"
+   ]
 }

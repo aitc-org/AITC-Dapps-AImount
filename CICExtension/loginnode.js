@@ -84,22 +84,28 @@ window.addEventListener('load', function load(event){
   btnconfirmimportwallet.addEventListener('click', function() {
 
     var mnemonic = $('#txt_seedphrase').val().trim();
-    var encryptseed = Encrypt(mnemonic);
-    console.log(encryptseed);
-    
-    localStorage.setItem("encryptedseedimport",encryptseed);
-    
-    //var cicAddress = $('#span_showaddress').text().trim();
-    //localStorage.setItem('PKaddress', cicAddress);
-    var encryptPrivatekey = Encrypt(PrivateKey);
-    localStorage.setItem('PK',encryptPrivatekey);
+    var derivepath = $('#txt_importwalletderivepath').val().trim();
+    var isvalid = bip39.validateMnemonic(mnemonic);
 
-    document.getElementById('enterMnemonicform').style.display = "none";
+    if((isvalid == true) && (derivepath != "")){
+      var encryptseed = Encrypt(mnemonic);
+      console.log(encryptseed);
     
-    chrome.browserAction.setPopup({
-      popup:"popup.html"
-      });
-      window.location.href = 'popup.html';
+      localStorage.setItem("encryptedseedimport",encryptseed);
+    
+      //var cicAddress = $('#span_showaddress').text().trim();
+      //localStorage.setItem('PKaddress', cicAddress);
+      var encryptPrivatekey = Encrypt(PrivateKey);
+      localStorage.setItem('PK',encryptPrivatekey);
+
+      document.getElementById('enterMnemonicform').style.display = "none";
+    
+      chrome.browserAction.setPopup({
+        popup:"popup.html"
+        });
+        window.location.href = 'popup.html';
+    }
+    
   });
 
   $("#txt_seedphrase, #txt_importwalletderivepath").on('keyup', function() {
@@ -129,13 +135,16 @@ window.addEventListener('load', function load(event){
        var cicAddress = sha256(publicAddress.toString("hex")).substr(24, 64)
       
         $('#span_showaddress').text(cicAddress);
+        $('#btn_confirmimportwallet').prop('disabled', false);
       }
       catch(err) {
         $('#span_showaddress').text("");
+        $('#btn_confirmimportwallet').prop('disabled', true);
       }
     }
     else{
       $('#span_showaddress').text("");
+      $('#btn_confirmimportwallet').prop('disabled', true);
     }
   });
 

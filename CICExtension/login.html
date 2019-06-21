@@ -163,7 +163,7 @@
                                                       <span class="lbl_passerror" id="lbl_importwalletpassworderror"></span>
                                                   </div>
                                                   -->
-                                                  <button type="button" class="button btn-primary first-time-flow__button" id="btn_confirmimportwallet">Import</button>
+                                                  <button type="button" class="button btn-primary first-time-flow__button savePKbutton" id="btn_confirmimportwallet" disabled>Import</button>
                                               </form>
                                             </div>
                                         </div>
@@ -193,12 +193,14 @@
                                                           <span class="lbl_passerror" id="lbl_passworderror" style="color:red"></span>
                                                   </div>
                                                   -->
+
+                                                  <div style="display:inline-flex">
+                                                    <button type="button" class="button btn-primary first-time-flow__button savePKbutton" style="margin:10px 0;" id="btn_cancelcreate">Cancel</button>
+                                                    <button type="button" class="button btn-primary first-time-flow__button savePKbutton" style="margin:10px" id="btn_confirmcreate">Create</button>
+                                                </div>
                                                   
                                               </form>
-                                              <div style="display:inline-flex">
-                                                  <button type="button" class="button btn-primary first-time-flow__button" style="margin:10px 0;" id="btn_cancelcreate">Cancel</button>
-                                                  <button type="button" class="button btn-primary first-time-flow__button" id="btn_confirmcreate">Create</button>
-                                              </div>
+                                              
                                             </div>
                                         </div>
                                   </div>
