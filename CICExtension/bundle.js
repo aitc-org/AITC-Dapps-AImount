@@ -33047,7 +33047,7 @@ function signTransaction(to,amount,inputhex,nonce){
       Type : "a66",
       Input : inputhex
     }  
-    let transaction = new sdag.Signs.NewTransaction(pri,tx)
+    let transaction = new sdag.Signs.NewTransaction(pk,tx)
     //Sign Transaction using GetSignRawHexFull() and use output result for broadcast.
     var signtrans = transaction.GetSignRawHexFull();
     var result = signtrans.result;
