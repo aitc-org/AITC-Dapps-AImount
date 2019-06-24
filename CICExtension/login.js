@@ -30,6 +30,11 @@ $(document).ready(function() {
         document.getElementById('importwalletoptions').style.display = "none";
         document.getElementById('enterPKform').style.display = "none";
         document.getElementById('enterMnemonicform').style.display = "block";
+        $('#txt_seedphrase').val("");
+        $('#txt_seedphrase').focus();
+        $('#txt_importwalletderivepath').val("m/44'/0'/0'/0/0");
+        $('#span_showaddress').text("");
+        $('#btn_confirmimportwallet').prop('disabled', true);
     });
 
     $('#btncancelPK').click(function(){
@@ -79,28 +84,8 @@ $(document).ready(function() {
                 // Add a space at the end to keep new typing making new words
                 $(this).val(trimmed + " ");
             }
-            else {
-            //$('#display_count').text(words);
-            //$('#word_left').text(12-words);
-            }
         }
     });
-
-
-    /*
-    $('#confirmnewpassword').on('keyup', function () {
-        if ($('#newpassword').val() == $('#confirmnewpassword').val()) {
-          $('#lbl_passworderror').html('');
-        } else {
-            $('#lbl_passworderror').html("Passwords Don't Match").css('color', 'red');
-        }
-        if(($('#confirmnewpassword').val().length >= 8) && ($('#newpassword').val() == $('#confirmnewpassword').val())){
-            $('#btn_confirmcreate').prop('disabled', false);
-        }
-        else{
-            $('#btn_confirmcreate').prop('disabled', true);
-        }
-    });*/
 
     $('[id="inputPK"]').on('keyup', function() {
         var regexp = /^[0-9a-fA-F]+$/;
@@ -119,23 +104,5 @@ $(document).ready(function() {
         document.getElementById('CreateWallet').style.display = "none";
     });
 
-    $(".checkmark").click(function () {
-        $(this).toggleClass("green");
-        if($("#btn_confirmshowaddress").is(":disabled") == true){
-            $('#btn_confirmshowaddress').prop('disabled', false);
-        }
-        else{
-            $('#btn_confirmshowaddress').prop('disabled', true);
-        }
-    });
-    /*
-    $('#btnsavePK').click(function(){
-        
-        var PK = $('#inputPK').val().trim();
-        localStorage.PK = PK;
-        chrome.browserAction.setPopup({
-        popup:"popup.html"
-        });
-        window.location.href = 'popup.html';
-    });*/
+  
 });

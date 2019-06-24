@@ -33078,6 +33078,7 @@ function sendTransactionBroadcast(result,to,amount){
 
       localStorage.ls_to = to;
       localStorage.ls_amount = amount;
+      localStorage.txid = json;
 
       sethistory();
 
@@ -33104,11 +33105,33 @@ function sendTransactionBroadcast(result,to,amount){
 
 function DecryptPrivateKey(encryptedHex){
   var key;
+  var password;
 
+  if (!(localStorage.getItem("password") === null)) {
+    password = localStorage.password;
+  }
+
+  //var password = $('#newpassword').val().trim();
+  var passwordtohex = toHex(password);
+  var hextodec = hextodecimal(passwordtohex);
+  console.log('Decrypt password to hex: '+password);
+  console.log('Decrypt hex to int '+ hextodec);
+  var subStr = hextodec.toString().substr(0, 16);
+  console.log(subStr);
+  arr = subStr.toString(10).split('').map(Number);
+  for(i=0;i<arr.length;i++){
+    arr[i] = +arr[i]|0 ;
+  } 
+
+  key = arr;
+
+  /*
   if (!(localStorage.getItem("quentinTarantino") === null)) {
     var retrievedData = localStorage.getItem("quentinTarantino");
     key = JSON.parse(retrievedData);
   }
+  */
+
   //var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
   // When ready to decrypt the hex string, convert it back to bytes
   var encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex);
@@ -33123,6 +33146,45 @@ function DecryptPrivateKey(encryptedHex){
   console.log(decryptedText);
   return decryptedText;
 }
+
+//convert string into hex function
+function toHex(str) {
+  var hex = '';
+  var i = 0;
+  while(str.length > i) {
+      hex += ''+str.charCodeAt(i).toString(16);
+      i++;
+  }
+  return hex;
+}
+
+//convert hex into decimal function
+function hextodecimal(s) {
+
+function add(x, y) {
+    var c = 0, r = [];
+    var x = x.split('').map(Number);
+    var y = y.split('').map(Number);
+    while(x.length || y.length) {
+        var s = (x.pop() || 0) + (y.pop() || 0) + c;
+        r.unshift(s < 10 ? s : s - 10); 
+        c = s < 10 ? 0 : 1;
+    }
+    if(c) r.unshift(c);
+    return r.join('');
+}
+
+var dec = '0';
+s.split('').forEach(function(chr) {
+    var n = parseInt(chr, 16);
+    for(var t = 8; t; t >>= 1) {
+        dec = add(dec, dec);
+        if(n & t) dec = add(dec, '1');
+    }
+});
+return dec;
+}
+
 
 function getNonce(to,amount,inputhex) {
     
@@ -33253,53 +33315,35 @@ window.addEventListener('load', function load(event){
   var btncancelexport = document.getElementById('exportPK_cancel');
   btncancelexport.addEventListener('click', function() { 
     document.getElementById('txt_enterseed').value = "";
-    document.getElementById('exportPK_confirm').disabled = true;
+    //document.getElementById('exportPK_confirm').disabled = true;
     document.getElementById('enterseeddiv').style.display = "none";
     $('#lbl_exporterror').html("").css('color', 'red');
   });
 
-  $("#txt_enterseed").on('keyup', function() {
-    if(this.value != ""){
-        var words = this.value.match(/\S+/g).length;
-        if (words > 12) {
-            var trimmed = $(this).val().split(/\s+/, 12).join(" ");
-            $(this).val(trimmed + " ");
-        }
-        else if(words == 12) {
-          document.getElementById('exportPK_confirm').disabled = false;
-        }
-        else{
-          document.getElementById('exportPK_confirm').disabled = true;
-        }
-    }
-    $('#lbl_exporterror').html("").css('color', 'red');
-});
 
   var showPKdiv = document.getElementById('exportPK_confirm');
   showPKdiv.addEventListener('click', function() { 
-    if (!(localStorage.getItem("seedphrase") === null)) {
-      var seedphrase = localStorage.seedphrase;
-      var checkseedphrase = document.getElementById('txt_enterseed').value.trim();
-      seedphrase = seedphrase.replace(/\s/g, "");
-      checkseedphrase = checkseedphrase.replace(/\s/g, "");
-      if(checkseedphrase == seedphrase){
+    if (!(localStorage.getItem("password") === null)) {
+      var password = localStorage.password;
+      var checkpassword = document.getElementById('txt_enterseed').value.trim();
+     
+      if(password == checkpassword){
         if (!(localStorage.getItem("PK") === null)) {
           var PK = DecryptPrivateKey(localStorage.PK);
           document.getElementById('showPkdiv').style.display = "block";
           document.getElementById('span_showPK').innerHTML = PK;
-    
+        
           document.getElementById('txt_enterseed').value = "";
-          document.getElementById('exportPK_confirm').disabled = true;
+          //document.getElementById('exportPK_confirm').disabled = true;
           document.getElementById('enterseeddiv').style.display = "none";
         }
         $('#lbl_exporterror').html("").css('color', 'red');
       }
       else{
         //document.getElementById('lbl_exporterror').innerHTML = "Incorrect seed phrase";
-        $('#lbl_exporterror').html("Incorrect seed phrase").css('color', 'red');
+        $('#lbl_exporterror').html("Incorrect password").css('color', 'red');
       }
     }
-    
   });
 
   $('#span_showPK').click(function(event) {
@@ -33310,27 +33354,26 @@ window.addEventListener('load', function load(event){
 
 function sethistory(){
 
-    if ((localStorage.getItem("ls_to") === null) && (localStorage.getItem("ls_amount") === null)) {
-       
-    }
-    else{
-        var toaddress = localStorage.ls_to;
-        var amountbalance = localStorage.ls_amount;
-        amountbalance = amountbalance / 1000000000000000000;
-        var status = "nonverified";
-    
-        var a = '<div class="grid-container">';
-        a += '<div class="item1">'+toaddress+'</div>';
-        a += '<div class="item2">Contract Interaction</div>';
-        a += '<div class="item3" style="text-align:right">';
-        a += '<span class="currency-display-component__text">-'+amountbalance+'</span>';
-        a += '<span class="currency-display-component__suffix">CIC</span>';
-        a += '</div>';
-        a += '<div class="item4"><span class="transaction-status--confirmed">'+status+'</span></div>';
-        a += '</div>';
-        
-        $('#historylist').prepend(a);
-    }
+    if (!((localStorage.getItem("ls_to") === null) && (localStorage.getItem("ls_amount") === null) && (localStorage.getItem("txid") === null))) {
+      var toaddress = localStorage.ls_to;
+      var amountbalance = localStorage.ls_amount;
+      var txid = localStorage.txid;
+      amountbalance = amountbalance / 1000000000000000000;
+      var status = "nonverified";
+  
+      var a = '<div class="grid-container">';
+      a += '<div class="item1">'+toaddress+'</div>';
+      a += '<div class="item2">Contract Interaction</div>';
+      a += '<div class="item3" style="text-align:right">';
+      a += '<span class="currency-display-component__text">-'+amountbalance+'</span>';
+      a += '<span class="currency-display-component__suffix">CIC</span>';
+      a += '</div>';
+      a += '<div class="item4"><span class="transaction-status--confirmed">'+status+'</span></div>';
+      a += '<div class="item5"><span class="span_txid">'+"txid: "+txid+'</span></div>';
+      a += '</div>';
+      
+      $('#historylist').prepend(a);
+    }   
 }
 
 

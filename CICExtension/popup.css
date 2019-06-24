@@ -484,7 +484,12 @@ body{
   
     .item1 {
         grid-area: myArea;
-      }
+    }
+    
+    .item5 {
+        grid-area: myArea;
+        grid-row: 4;
+    }
       
     .grid-container {
         display: grid;
@@ -629,12 +634,13 @@ body{
         font-size: 14px;
         line-height: 21px;
         width: 100%;
-        height: 100px;
+        /*height: 100px;*/
         color: #4d4d4d;
     }
     .exportkey__button{
         width: 60px;
         display: initial;
+        margin-top: 5px;
     }
     .btn-secondary:hover {
         border-color: #037DD6;
@@ -686,6 +692,9 @@ body{
         width: fit-content;
         height: 40px;
         font-size: 1.4rem;
+    }
+    .span_txid{
+        word-break: break-all;
     }
 
     

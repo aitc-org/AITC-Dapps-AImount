@@ -11,6 +11,7 @@ window.addEventListener('load', function load(event){
 
   var mnemonic = ""; 
   var PrivateKey="";   
+
   var btnfromlogin = document.getElementById('btnsavePK');
   btnfromlogin.addEventListener('click', function() { 
         var PK = $('#inputPK').val().trim();
@@ -72,10 +73,10 @@ window.addEventListener('load', function load(event){
     console.log('publicAddress '+publicAddress);
     console.log('cicAddress '+cicAddress);
 
-    var encryptseed = Encrypt(mnemonic);
-    console.log(encryptseed);
-    
-    localStorage.setItem("encryptedseed",encryptseed);
+    //var encryptseed = Encrypt(seedphrase);
+    //console.log(encryptseed);
+    //localStorage.setItem("encryptedseed",encryptseed);
+
     document.getElementById('CreateWallet').style.display = "none";
     document.getElementById('importwalletoptions').style.display = "block";
   });
@@ -91,7 +92,7 @@ window.addEventListener('load', function load(event){
       var encryptseed = Encrypt(mnemonic);
       console.log(encryptseed);
     
-      localStorage.setItem("encryptedseedimport",encryptseed);
+      //localStorage.setItem("encryptedseedimport",encryptseed);
     
       //var cicAddress = $('#span_showaddress').text().trim();
       //localStorage.setItem('PKaddress', cicAddress);
@@ -106,6 +107,14 @@ window.addEventListener('load', function load(event){
         window.location.href = 'popup.html';
     }
     
+  });
+
+  var btncancelimportwallet = document.getElementById('btn_cancelimportwallet');
+  btncancelimportwallet.addEventListener('click', function() {
+    $('#txt_seedphrase').val("");
+    $('#txt_importwalletderivepath').val("m/44'/0'/0'/0/0");
+    $('#span_showaddress').text("");
+    $('#btn_confirmimportwallet').prop('disabled', true);
   });
 
   $("#txt_seedphrase, #txt_importwalletderivepath").on('keyup', function() {
@@ -173,7 +182,7 @@ function Encrypt(strdata){
 
     //var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
     var key = arr;
-    localStorage.setItem("quentinTarantino", JSON.stringify(key));
+    //localStorage.setItem("quentinTarantino", JSON.stringify(key));
   
     // Convert text to bytes
     var text = strdata;
@@ -191,11 +200,31 @@ function Encrypt(strdata){
   
   function DecryptPrivateKey(encryptedHex){
     var key;
-  
+    var password;
+    /*
     if (!(localStorage.getItem("quentinTarantino") === null)) {
       var retrievedData = localStorage.getItem("quentinTarantino");
       key = JSON.parse(retrievedData);
+    }*/
+
+    if (!(localStorage.getItem("password") === null)) {
+      password = localStorage.password;
     }
+  
+    //var password = $('#newpassword').val().trim();
+    var passwordtohex = toHex(password);
+    var hextodec = hextodecimal(passwordtohex);
+    console.log('Decrypt password to hex: '+password);
+    console.log('Decrypt hex to int '+ hextodec);
+    var subStr = hextodec.toString().substr(0, 16);
+    console.log(subStr);
+    arr = subStr.toString(10).split('').map(Number);
+    for(i=0;i<arr.length;i++){
+      arr[i] = +arr[i]|0 ;
+    } 
+  
+    key = arr;
+
     //var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
     // When ready to decrypt the hex string, convert it back to bytes
     var encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex);
