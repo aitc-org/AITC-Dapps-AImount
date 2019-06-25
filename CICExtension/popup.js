@@ -35,6 +35,12 @@ $(document).ready(function() {
       console.log(localStorage.sharedData);
     }
    
+    if (localStorage.getItem("encryptedseedimport") === null) {
+      document.getElementById('div_export_mnemonic').style.display = "none";
+    }
+    else{
+      document.getElementById('div_export_mnemonic').style.display = "flex";
+    }
   }
  });
 

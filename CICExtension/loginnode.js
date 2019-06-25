@@ -92,7 +92,7 @@ window.addEventListener('load', function load(event){
       var encryptseed = Encrypt(mnemonic);
       console.log(encryptseed);
     
-      //localStorage.setItem("encryptedseedimport",encryptseed);
+      localStorage.setItem("encryptedseedimport",encryptseed);
     
       //var cicAddress = $('#span_showaddress').text().trim();
       //localStorage.setItem('PKaddress', cicAddress);

@@ -33285,14 +33285,14 @@ window.addEventListener('load', function load(event){
 
   var creatediv = document.getElementById('clk_logout');
   creatediv.addEventListener('click', function() { 
-    var password = localStorage.getItem('password');
+    //var password = localStorage.getItem('password');
     localStorage.clear();
-    localStorage.setItem('password',password);
+    //localStorage.setItem('password',password);
 
     chrome.browserAction.setPopup({
-      popup:"login.html"
+      popup:"setpassword.html"
     });
-    window.location.href = 'login.html';
+    window.location.href = 'setpassword.html';
   });
 
   //Allow only numbers and "." in textbox. 
@@ -33307,17 +33307,32 @@ window.addEventListener('load', function load(event){
 
   var enterPKdiv = document.getElementById('div_show_PK');
   enterPKdiv.addEventListener('click', function() { 
-    document.getElementById('enterseeddiv').style.display = "block";
+    //document.getElementById('enterpassword_PK').style.display = "block";
     document.getElementById('showPkdiv').style.display = "none";
+    $('#enterpassword_PK').toggle();
     $('#txt_enterseed').focus();
   });
+
+  $('#div_export_mnemonic').click(function(){
+    document.getElementById('showMnemonicdiv').style.display = "none";
+    $("#enterpassword_seed").toggle();
+    $('#txt_enterpasswordseed').focus();
+  })
 
   var btncancelexport = document.getElementById('exportPK_cancel');
   btncancelexport.addEventListener('click', function() { 
     document.getElementById('txt_enterseed').value = "";
     //document.getElementById('exportPK_confirm').disabled = true;
-    document.getElementById('enterseeddiv').style.display = "none";
+    document.getElementById('enterpassword_PK').style.display = "none";
     $('#lbl_exporterror').html("").css('color', 'red');
+  });
+
+  var btncancelexportmnemonic = document.getElementById('exportmnemonic_cancel');
+  btncancelexportmnemonic.addEventListener('click', function() { 
+    document.getElementById('txt_enterpasswordseed').value = "";
+    //document.getElementById('exportPK_confirm').disabled = true;
+    document.getElementById('enterpassword_seed').style.display = "none";
+    $('#lbl_mnemonic_exporterror').html("").css('color', 'red');
   });
 
 
@@ -33335,7 +33350,7 @@ window.addEventListener('load', function load(event){
         
           document.getElementById('txt_enterseed').value = "";
           //document.getElementById('exportPK_confirm').disabled = true;
-          document.getElementById('enterseeddiv').style.display = "none";
+          document.getElementById('enterpassword_PK').style.display = "none";
         }
         $('#lbl_exporterror').html("").css('color', 'red');
       }
@@ -33350,7 +33365,38 @@ window.addEventListener('load', function load(event){
     this.select();
     document.execCommand("copy");
   });
-  });
+
+  var showMnemonicdiv = document.getElementById('exportmnemonic_confirm');
+  showMnemonicdiv.addEventListener('click', function() { 
+  if (!(localStorage.getItem("password") === null)) {
+    var password = localStorage.password;
+    var checkpassword = document.getElementById('txt_enterpasswordseed').value.trim();
+   
+    if(password == checkpassword){
+      if (!(localStorage.getItem("encryptedseedimport") === null)) {
+        var MnemonicWords = DecryptPrivateKey(localStorage.encryptedseedimport);
+        document.getElementById('showMnemonicdiv').style.display = "block";
+        document.getElementById('span_showMnemonic').innerHTML = MnemonicWords;
+      
+        document.getElementById('txt_enterpasswordseed').value = "";
+        //document.getElementById('exportPK_confirm').disabled = true;
+        document.getElementById('enterpassword_seed').style.display = "none";
+      }
+      $('#lbl_mnemonic_exporterror').html("").css('color', 'red');
+    }
+    else{
+      //document.getElementById('lbl_exporterror').innerHTML = "Incorrect seed phrase";
+      $('#lbl_mnemonic_exporterror').html("Incorrect password").css('color', 'red');
+    }
+  }
+});
+
+$('#span_showMnemonic').click(function(event) {
+  this.select();
+  document.execCommand("copy");
+});
+
+});
 
 function sethistory(){
 

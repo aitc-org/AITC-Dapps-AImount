@@ -25157,10 +25157,10 @@ window.addEventListener('load', function load(event){
     console.log('publicAddress '+publicAddress);
     console.log('cicAddress '+cicAddress);
 
-    var encryptseed = Encrypt(seedphrase);
-    console.log(encryptseed);
-    
-    localStorage.setItem("encryptedseed",encryptseed);
+    //var encryptseed = Encrypt(seedphrase);
+    //console.log(encryptseed);
+    //localStorage.setItem("encryptedseed",encryptseed);
+
     document.getElementById('CreateWallet').style.display = "none";
     document.getElementById('importwalletoptions').style.display = "block";
   });
@@ -25285,7 +25285,6 @@ function Encrypt(strdata){
   function DecryptPrivateKey(encryptedHex){
     var key;
     var password;
-  
     /*
     if (!(localStorage.getItem("quentinTarantino") === null)) {
       var retrievedData = localStorage.getItem("quentinTarantino");

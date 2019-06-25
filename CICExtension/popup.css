@@ -572,7 +572,7 @@ body{
         overflow: hidden;
         resize: none;
         padding: 9px 13px 8px;
-        text-transform: uppercase;
+        /*text-transform: uppercase;*/
     }
     .private-key-password-label, .private-key-password-error {
         color: black;
@@ -618,9 +618,9 @@ body{
     }
     .first-time-flow__button {
         margin: 10px;
-        width: 80px;
+        /*width: 80px;*/
         height: 40px;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         margin-left: 0px;
     }
 
