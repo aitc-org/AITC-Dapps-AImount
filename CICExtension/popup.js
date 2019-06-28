@@ -7,9 +7,24 @@ $(document).ready(function() {
     $('#settingspopup').toggle();
   });
 
+  $('#sidebarmenu').click(function(){
+    document.getElementById("settingspopup").style.display = "none";
+    $("#rightsidebar").toggle("slide");
+  });
+  
+  $('#close_sidebarright').click(function(){
+    document.getElementById("rightsidebar").style.display = "none";
+  });
+
   $('#div_add_token').click(function(){
     document.getElementById("settingspopup").style.display = "none";
+    document.getElementById("rightsidebar").style.display = "none";
     document.getElementById("addtokenform").style.display = "block";
+    document.getElementById('txt_tokenaddress').value = "";
+    document.getElementById('txt_tokensymbol').value = "";
+    document.getElementById('txt_decprecesion').value = "";
+    $('#lbl_addtokenerror').html("");
+    $('#txt_tokenaddress').focus();
   });
 
   $('#sendtr').click(function(){
@@ -43,6 +58,7 @@ $(document).ready(function() {
     }
   }
  });
+
 
 
 

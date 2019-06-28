@@ -11,6 +11,9 @@ var ShowBalance;
 //Create account
 var pri = "";
 
+//check token address
+var validTokenaddress = true;
+
 
 function signTransaction(to,amount,inputhex,nonce){
     //nonce = getNonce();
@@ -238,6 +241,7 @@ function getBalance() {
 
 window.addEventListener('load', function load(event){
 
+
   if (!(localStorage.getItem("PK") === null)) {
     pri = DecryptPrivateKey(localStorage.PK);
     let account2 = new sdag.Accounts.NewAccount(pri);
@@ -246,6 +250,7 @@ window.addEventListener('load', function load(event){
     localStorage.PKaddress = account2.Address;
   }
   getBalance();
+  setTokenList();
     
   var createButton = document.getElementById('send');
   createButton.addEventListener('click', function() { 
@@ -319,6 +324,104 @@ window.addEventListener('load', function load(event){
     $('#lbl_mnemonic_exporterror').html("").css('color', 'red');
   });
 
+  var btncancel_addtoken = document.getElementById('cancel_addtoken');
+  btncancel_addtoken.addEventListener('click', function() { 
+    document.getElementById('txt_tokenaddress').value = "";
+    document.getElementById('txt_tokensymbol').value = "";
+    document.getElementById('txt_decprecesion').value = "";
+    $('#lbl_addtokenerror').html("").css('color', 'red');
+    document.getElementById('addtokenform').style.display = "none";
+  });
+
+  var btnconfirm_addtoken = document.getElementById('confirm_addtoken');
+  btnconfirm_addtoken.addEventListener('click', function() { 
+    var tokenadress = document.getElementById('txt_tokenaddress').value;
+    var symbol = document.getElementById('txt_tokensymbol').value;
+    var decimalprecision = document.getElementById('txt_decprecesion').value;
+    
+    if((tokenadress!="") && (symbol!="") && (decimalprecision!="")){
+      
+      getTokenBalance(tokenadress,symbol,decimalprecision);
+
+      document.getElementById("addtokenform").style.display = "none";
+      $("#rightsidebar").toggle("slide");
+      }
+  });
+
+   //Allow only numbers and "." in textbox. 
+   $('#txt_decprecesion').keypress(function(event) {
+    if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
+            $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+        event.preventDefault();
+    }
+  }).on('paste', function(event) {
+    event.preventDefault();
+  });
+
+  $("#txt_tokenaddress").on('keyup', function() {
+
+    var to = this.value.trim();
+    if(to != ""){
+      var regexp = /^(0[xX])?[A-Fa-f0-9]+$/;  //regex to check hex value
+      if((to.length == 42) && (regexp.test(to))){
+
+        if (!(localStorage.getItem("Token") === null)) {
+          var Tokeninfo = JSON.parse(localStorage.getItem("Token"));
+          for(var i=0; i < Tokeninfo.length;i++){
+            if(Tokeninfo[i]["TAddress"] == to){
+              validTokenaddress = false;
+              $('#lbl_addtokenerror').html("Token has already been added.").css('color', 'red');
+              $('#confirm_addtoken').prop('disabled', true);
+              break;
+            }
+            else{
+              validTokenaddress = true;
+              $('#lbl_addtokenerror').html("");
+            }
+          }
+        }
+        if(validTokenaddress == true){
+          getTokenSymbol(to);
+          getTokenDecimalPrecision(to);
+        }
+      }
+      else{
+        $('#confirm_addtoken').prop('disabled', true);
+        $('#txt_tokensymbol').val("");
+        $('#txt_decprecesion').val("");
+        $('#lbl_addtokenerror').html("");
+      }  
+    }
+    else{
+      $('#confirm_addtoken').prop('disabled', true);
+    }
+
+  });
+
+  $("#txt_tokensymbol,#txt_decprecesion").on('keyup', function() {
+
+    var to = $("#txt_tokenaddress").val().trim();
+    var regexp = /^(0[xX])?[A-Fa-f0-9]+$/;  //regex to check hex value
+      
+    if($("#txt_tokensymbol").val().length == 0){
+      $('#confirm_addtoken').prop('disabled', true);
+    }
+    else if($("#txt_decprecesion").val().length == 0){
+      $('#confirm_addtoken').prop('disabled', true);
+    }
+    else if($("#txt_tokenaddress").val().length != 42){
+      $('#confirm_addtoken').prop('disabled', true);
+    }
+    else if(!(regexp.test(to))){
+      $('#confirm_addtoken').prop('disabled', true);
+    }
+    else if(validTokenaddress == false){
+      $('#confirm_addtoken').prop('disabled', true);
+    }
+    else{
+      $('#confirm_addtoken').prop('disabled', false);
+    }
+  });
 
   var showPKdiv = document.getElementById('exportPK_confirm');
   showPKdiv.addEventListener('click', function() { 
@@ -406,9 +509,210 @@ function sethistory(){
     }   
 }
 
+function getTokenSymbol(tokenadress){
 
+  var PKaddress;
+  if (!(localStorage.getItem("PKaddress") === null)) {
+    PKaddress = localStorage.PKaddress;
+  }
 
+  //var inputstring = "0x70a08231000000000000000000000000"+PKaddress;
 
+  var xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var data = JSON.parse(this.response);
+        console.log(this.responseText);
+        if(data.ret!=""){
+          var jdata = {"ret":data.ret };
+        
+          $.ajax({ 
+            type : "POST", 
+            url : " http://192.168.51.212:5314/casigo/sDAGSymbol", 
+            dataType: "json", 
+            data: JSON.stringify(jdata), 
+            contentType: 'application/json', 
+            success:function(json){ 
+              $('#txt_tokensymbol').val(json["symbol"]);
+
+              if(($("#txt_tokensymbol").val().length != 0) && ($("#txt_decprecesion").val().length != 0)){
+                $('#confirm_addtoken').prop('disabled', false);
+              }
+            }, 
+            error: function() { 
+            console.log("error"); 
+            } 
+          }); 
+        }
+        else{
+          $('#txt_tokensymbol').val("");
+        }
+        
+      }
+    };
+    xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+   
+    var input = JSON.stringify({
+      "from": PKaddress,
+      "to": tokenadress,
+      "balance": "0",
+      "nonce": 98,
+      "input":"0x95d89b41", 
+      "type":"VvmDCall"
+    });
+    xhttp.send(input);
+}
+
+function getTokenDecimalPrecision(tokenadress){
+
+  var PKaddress;
+  if (!(localStorage.getItem("PKaddress") === null)) {
+    PKaddress = localStorage.PKaddress;
+  }
+
+  var xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var data = JSON.parse(this.response);
+        console.log(this.responseText);
+        if(data.ret!=""){
+          var hex = data.ret;
+          //console.log("Decimal"+hex)
+          var decimalprecision = hextodecimal(hex);
+          $('#txt_decprecesion').val(decimalprecision);
+
+          if(($("#txt_tokensymbol").val().length != 0) && ($("#txt_decprecesion").val().length != 0)){
+            $('#confirm_addtoken').prop('disabled', false);
+          }
+        }
+        else{
+          $('#txt_decprecesion').val("");
+        }
+        
+      }
+    };
+    xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+   
+    var input = JSON.stringify({
+      "from": PKaddress,
+      "to": tokenadress,
+      "balance": "0",
+      "nonce": 98,
+      "input":"0x313ce567", 
+      "type":"VvmDCall"
+    });
+    xhttp.send(input);
+}
+
+function getTokenBalance(tokenadress,symbol,decimalprecision){
+
+  var PKaddress;
+  if (!(localStorage.getItem("PKaddress") === null)) {
+    PKaddress = localStorage.PKaddress;
+  }
+
+  var inputstring = "0x70a08231000000000000000000000000"+PKaddress;
+
+  var xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var data = JSON.parse(this.response);
+        console.log(this.responseText);
+        if(data.ret!=""){
+          var hex = data.ret;
+          var balance = hextodecimal(hex);
+          console.log("Token Balance: "+balance);
+          var token =[];
+          var tokeninfo = {"TAddress":tokenadress,"Tsymbol":symbol,"Tdecimal":decimalprecision,"TBalance":balance}
+          
+          if (!(localStorage.getItem("Token") === null)) {
+            var storeTokeninfo = JSON.parse(localStorage.getItem("Token"));
+            storeTokeninfo.push(tokeninfo);
+            localStorage.setItem('Token', JSON.stringify(storeTokeninfo));
+          }
+          else{
+            token.push(tokeninfo);
+            localStorage.setItem('Token', JSON.stringify(token));
+          }
+        }
+        else{
+          var token =[];
+          var tokeninfo = {"TAddress":tokenadress,"Tsymbol":symbol,"Tdecimal":decimalprecision,"TBalance":0}
+          
+          if (!(localStorage.getItem("Token") === null)) {
+            var storeTokeninfo = JSON.parse(localStorage.getItem("Token"));
+            storeTokeninfo.push(tokeninfo);
+            localStorage.setItem('Token', JSON.stringify(storeTokeninfo));
+          }
+          else{
+            token.push(tokeninfo);
+            localStorage.setItem('Token', JSON.stringify(token));
+          }
+        }
+        setTokenList();
+      }
+    };
+    xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+   
+    var input = JSON.stringify({
+      "from": PKaddress,
+      "to": tokenadress,
+      "balance": "0",
+      "nonce": 98,
+      "input":inputstring, 
+      "type":"VvmDCall"
+    });
+    xhttp.send(input);
+}
+
+function setTokenList(){
+
+  if (!(localStorage.getItem("Token") === null)) {
+
+    document.getElementById('showtokens').innerHTML = "";
+
+    var Tokeninfo = JSON.parse(localStorage.getItem("Token"));
+
+    for(var i=0; i < Tokeninfo.length;i++){
+      console.log("Taddress: "+Tokeninfo[i]["TAddress"]);
+      var bal = Tokeninfo[i]["TBalance"] / 1000000000000000000
+   
+      var a = '<div class="grid-container tokenbackground settokenbackground">';
+      a += '<div class="item3 showbal">';
+      a += '<input type="hidden" class="inputhidden" id="'+i+'_hdn_Tokenaddress" value="'+Tokeninfo[i]["TAddress"]+'">';
+      a += '<div class="token-list-item__token-symbol">'+bal+'</div>';
+      a += '<div class="token-list-item__token-symbol" style="margin-left: 2px;">'+Tokeninfo[i]["Tsymbol"]+'</div>';
+      a += '</div>';
+      a += '<div class="item2 tokenname"><i class="fas fa-share" title="Send Token"></i>';
+      a += '<i class="fas fa-minus-circle hideicon" id="'+i+'_hidetoken" title="Hide Token"></i>';
+      a += ' </div>';  
+      a += ' </div>';    
+      $('#showtokens').prepend(a);
+      $('#'+i+'_hidetoken').on('click', function(){
+        var current_tokenAddr = $(this).parent().parent().find('.inputhidden').val();
+        removeTokenLocalstorage(current_tokenAddr);
+        $(this).parent().parent().remove();
+      });
+    }
+  }   
+}
+
+function removeTokenLocalstorage(current_tokenAddr) {
+  var Tokeninfo = localStorage.getItem('Token') ? JSON.parse(localStorage.getItem('Token')) : [];
+  var index;
+  for (var i = 0; i < Tokeninfo.length; i++) {
+      if (Tokeninfo[i]["TAddress"] == current_tokenAddr) {
+        index=i;
+        break;
+      }
+  }
+  if(index === undefined) return 
+  Tokeninfo.splice(index, 1);
+  localStorage.setItem('Token', JSON.stringify(Tokeninfo));
+}
 
 
   

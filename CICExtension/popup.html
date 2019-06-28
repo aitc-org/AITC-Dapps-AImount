@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="popup.css" type="text/css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-
+    
   </head>
   <body>
     <div id="app-content">
@@ -70,11 +70,31 @@
             </li> 
         </div>
 
+         <!--Slidebar Right Popup-->
+         <div class="wallet-view flex-column sidebar-right" id="rightsidebar" style="display: none">
+          <div class="flex-column wallet-view-account-details">
+            <div class="wallet-view__sidebar-close" id="close_sidebarright"></div>
+          </div>
+          <div class="wallet-view__tooltip">
+            <div class="network-dropdown-title">Token List</div>
+          </div>
+          <div id="showtokens">
+            <!--Dynamically fill this-->
+          </div>
+          
+          <div class="grid-container" style="background: none">
+              <div class="item1 textaligncenter addtoken" id="div_add_token">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                <span>Add Token</span>
+              </div>
+          </div>
+        </div>
+
         <div class="menu-droppo" id="settingspopup" style="display:none;border-radius: 4px; padding: 18px 8px; background: rgba(201, 223, 138, 0.8); color: black; box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 2px 2px;">
           <div class="network-dropdown-header">
             <div class="network-dropdown-title">Settings</div>
             <div class="network-dropdown-divider"></div>
-          </div>   
+          </div>  
          
           
           <div class="menu__item menu__item  menu__item--clickable" id="div_show_PK">
@@ -108,11 +128,12 @@
             <button class="button btn-secondary exportkey__button" id="exportmnemonic_cancel">Cancel</button>
             <button class="button btn-secondary exportkey__button" id="exportmnemonic_confirm">Confirm</button>
             <span class="lbl_passerror" id="lbl_mnemonic_exporterror"></span>
-        </div>
-        <div id="showMnemonicdiv" style="display:none; padding: 18px;">
-          <span class="private-key-password-label">This is your Mnemonic Phrase (click to copy)</span>
-          <textarea class="private-key-password-display-textarea" id="span_showMnemonic" readonly></textarea>
-        </div>
+          </div>
+          <div id="showMnemonicdiv" style="display:none; padding: 18px;">
+            <span class="private-key-password-label">This is your Mnemonic Phrase (click to copy)</span>
+            <textarea class="private-key-password-display-textarea" id="span_showMnemonic" readonly></textarea>
+          </div>
+        
         <div class="menu__item menu__item  menu__item--clickable" id="clk_logout">
             
           <div class="menu__item__icon">
@@ -129,12 +150,14 @@
           <div class="main-container">
             <div class="account-and-transaction-details">
               <div class="transaction-view">
-                <div class="menu-bar"></div>
+                <div class="menu-bar">
+                  <div class="fa fa-bars menu-bar__sidebar-button" id="sidebarmenu"></div>
+                </div>
                 <div class="transaction-view__balance-wrapper">
                   <div class="transaction-view-balance">
                     <div class="transaction-view-balance__balance-container">
                       <!--<img class="balance-icon" style="height:50px; width:50px;" src="https://www.cellintel.io/img/supernode/elements.png">-->
-                      <div class>
+                      <div>
                         <div class title="" style="display: inline;">
                           <div class="transaction-view-balance__balance">
                             <div class="transaction-view-balance__primary-container">
@@ -185,27 +208,29 @@
                     <div class="page-container" style="margin-left:3px;">
                         <div class="page-container__header">
                           <div class="page-container__title">Add Token</div>
-                          <form style="color:#4d4d4d;">
+                          <form style="color:#4d4d4d; margin-top: 10px;">
                               <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">To</label>
+                                <label for="staticEmail" class="col-sm-2 col-form-label">Token Contract Address</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputto" placeholder="To" autocomplete="off">
+                                    <input type="text" class="form-control" id="txt_tokenaddress" placeholder="Token Contract Address" autocomplete="off">
                                 </div>
                               </div>
                               <div class="form-group row">
-                                <label for="inputPassword" class="col-sm-2 col-form-label">Amount</label>
+                                <label for="inputPassword" class="col-sm-2 col-form-label">Token Symbol</label>
                                 <div class="col-sm-10">
-                                  <input type="text" class="form-control" id="inputamount" placeholder="Amount" autocomplete="off">
+                                  <input type="text" class="form-control" id="txt_tokensymbol" placeholder="Token Symbol" autocomplete="off">
                                 </div>
                               </div>
                               <div class="form-group row">
-                                  <label for="inputPassword" class="col-sm-2 col-form-label">InputHex</label>
+                                  <label for="inputPassword" class="col-sm-2 col-form-label">Decimals of Precision</label>
                                   <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputhex" placeholder="Input" autocomplete="off">
+                                    <input type="text" class="form-control" id="txt_decprecesion" placeholder="Decimals of Precision" autocomplete="off">
                                   </div>
-                                </div>
-                                <button type="button" class="btn btn-primary" id="cancel_addtoken">Cancel</button>
-                                <button type="button" class="btn btn-primary" id="confirm_addtoken">Submit</button>
+                                  <span class="lbl_passerror" style="padding-right: 15px; padding-left: 15px;" id="lbl_addtokenerror"></span>
+                              </div>
+                             
+                                <button type="button" class="btn btn-primary savePKbutton" id="cancel_addtoken">Cancel</button>
+                                <button type="button" class="btn btn-primary savePKbutton" id="confirm_addtoken" disabled>Submit</button>
                             </form>
                         </div>
                     </div>

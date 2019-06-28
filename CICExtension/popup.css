@@ -311,6 +311,21 @@ body{
         width: 72px;
         font-size: .5rem;
     }
+    .wallet-view__sidebar-close::after {
+        content: '\00D7';
+        font-size: 40px;
+        color: #4d4d4d;
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        cursor: pointer;
+    }
+    .wallet-view__tooltip {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 24px;
+    }
     
     } /*****575 media screen end******/
 
@@ -494,7 +509,7 @@ body{
     .grid-container {
         display: grid;
         grid-template-areas: 'myArea myArea';
-        grid-gap: 8px;
+        /*grid-gap: 8px;*/
         /*background-color: white;*/
         background: rgb(255,255,255,0.7);
         padding: 10px;
@@ -555,6 +570,10 @@ body{
 
     .textaligncenter{
         text-align: center;
+    }
+
+    .textalignright{
+        text-align: right;
     }
 
     .btn-default:hover {
@@ -697,10 +716,97 @@ body{
         word-break: break-all;
     }
 
+    .menu-bar {
+        display: flex;
+        flex-direction: row;
+        /*justify-content: center;*/
+        align-items: center;
+        flex: 0 0 auto;
+        margin-bottom: 16px;
+        padding: 5px;
+        border-bottom: 1px solid #e5e5e5;
+    }
+    .menu-bar__sidebar-button {
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .wallet-view.sidebar-right {
+        flex: 1 0 230px;
+        background: #fafafa;
+        z-index: 26;
+        position: fixed;
+        top: 66px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 1;
+        visibility: visible;
+        will-change: transform;
+        overflow-y: auto;
+        box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 4px;
+        width: 85%;
+        height: calc(100% - 56px);
+    }
+    .wallet-view {
+        display: flex;
+        flex-direction: column;
+        flex: 32 1 32%;
+        width: 0;
+        background: #fafafa;
+        z-index: 200;
+        position: relative;
+    }
+    .flex-column {
+        display: flex;
+        flex-direction: column;
+    }
+    .wallet-view .wallet-view-account-details {
+        flex: 0 0 auto;
+    }
+   
+    .token-list-item__token-symbol {
+        font-size: 1.5rem;
+        flex: 0 0 auto;
+    }
+  
+    .token-list-item__token-balance {
+        margin-right: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+        max-width: 100%;
+    }
+    .showbal{
+        display:inline-flex;
+        padding: 20px 24px;
+        font-size: 1.5rem;
+    }
+    .tokenname{
+        padding: 20px 24px;
+        font-size: 1.5rem;
+        text-align: right;
+        /*color: blue;*/
+        cursor: pointer;
+    }
+
+    .tokenbackground{
+        border-radius: 5px;
+        /*background: rgba(201,223,138,0.2);*/
+    }
     
 
+    .addtoken{
+        color: blue;
+        cursor: pointer;
+    }
+    .hideicon{
+        margin-left: 15px;
+    }
     
-
-    
-    
+    .settokenbackground:hover{
+        background: rgba(201,223,138,0.2);
+    }
     
