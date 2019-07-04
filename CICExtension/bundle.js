@@ -33024,20 +33024,27 @@ var settransactionlocal;
 var a = "";
 var ShowBalance;
 
-//Create account
 var pri = "";
 
 //check token address
 var validTokenaddress = true;
 
+var Defaultipaddress = '192.168.51.212';
+var DefaultMainport = '9999';
+var DefaultVMPort = '5214';
+var DefaultAppPort = '5314';
 
-function signTransaction(to,amount,inputhex,nonce){
+
+function signTransaction(to,amount,inputhex,nonce,gas){
     //nonce = getNonce();
     //console.log(nonce);
     var pk;
     if (!(localStorage.getItem("PK") === null)) {
       //pk = localStorage.PK;
       pk = DecryptPrivateKey(localStorage.PK);
+    }
+    if(gas == ""){
+      gas = "1";
     }
     if(nonce!== undefined){
       //Create transaction tx.
@@ -33046,7 +33053,7 @@ function signTransaction(to,amount,inputhex,nonce){
       PrivateKey : pk,
       Balance : amount,
       Nonce : String(nonce),
-      Gas : "1",
+      Gas : gas,
       Type : "a66",
       Input : inputhex
     }  
@@ -33064,7 +33071,8 @@ function sendTransactionBroadcast(result,to,amount){
     type : "POST", 
     async: true,
     timeout: 3000,
-    url : "http://192.168.51.212:9999/broadcast",	
+    //url : "http://192.168.51.212:9999/broadcast",
+    url : "http://"+Defaultipaddress+":"+DefaultMainport+"/broadcast",		
     data: JSON.stringify(result), 
     contentType: 'text/plain; charset=UTF-8', 
     success:function(json){ 
@@ -33077,11 +33085,25 @@ function sendTransactionBroadcast(result,to,amount){
       nonce = nonce + 1; //This is only for demo.
       
       document.getElementById("sendtrform").style.display = "none";
+      document.getElementById("Sendtokenform").style.display = "none";
       console.log('new nonce:'+nonce);
 
-      localStorage.ls_to = to;
+      /*localStorage.ls_to = to;
       localStorage.ls_amount = amount;
-      localStorage.txid = json;
+      localStorage.txid = json;*/
+
+      var History =[];
+      var historyinfo = {"ls_to":to,"ls_amount":amount,"txid":json}
+
+      if (!(localStorage.getItem("History") === null)) {
+        var storeHistoryinfo = JSON.parse(localStorage.getItem("History"));
+        storeHistoryinfo.push(historyinfo);
+        localStorage.setItem('History', JSON.stringify(storeHistoryinfo));
+      }
+      else{
+        History.push(historyinfo);
+        localStorage.setItem('History', JSON.stringify(History));
+      }
 
       sethistory();
 
@@ -33209,7 +33231,7 @@ function getNonce(to,amount,inputhex) {
     */
    //This is only for demo.
    console.log('nonce:'+nonce);
-   var result = signTransaction(to,amount,inputhex,nonce);
+   var result = signTransaction(to,amount,inputhex,nonce,"");
    sendTransactionBroadcast(result,to,amount);
 }
 
@@ -33223,8 +33245,8 @@ function getBalance() {
   $.ajax({ 
       type : "GET", 
       async: true,
-      url : "http://192.168.51.212:9999/getAccount?address="+PKaddress,
-      //url : "http://192.168.51.212:9999/getAccount?address=23471aa344372e9c798996aaf7a6159c1d8e3eac",   
+      //url : "http://192.168.51.212:9999/getAccount?address="+PKaddress,
+      url : "http://"+Defaultipaddress+":"+DefaultMainport+"/getAccount?address="+PKaddress,
       contentType: 'text/plain; charset=UTF-8', 
       success:function(data){ 
         console.log(data);
@@ -33265,8 +33287,18 @@ window.addEventListener('load', function load(event){
     console.log("PK Address:",account2.Address);
     localStorage.PKaddress = account2.Address;
   }
+  else{
+
+    localStorage.clear();
+    chrome.browserAction.setPopup({
+      popup:"setpassword.html"
+    });
+    window.location.href = 'setpassword.html';
+  }
   getBalance();
   setTokenList();
+  setNetworkList();
+  bindDefaultNetwork();
     
   var createButton = document.getElementById('send');
   createButton.addEventListener('click', function() { 
@@ -33301,7 +33333,7 @@ window.addEventListener('load', function load(event){
   });
 
   //Allow only numbers and "." in textbox. 
-  $('#inputamount').keypress(function(event) {
+  $('#txt_decprecesion,#inputamount,#inputamounttoken,#txt_nodemainport,#txt_nodeVMport,#txt_nodeAppport').keypress(function(event) {
     if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
             $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
         event.preventDefault();
@@ -33322,7 +33354,7 @@ window.addEventListener('load', function load(event){
     document.getElementById('showMnemonicdiv').style.display = "none";
     $("#enterpassword_seed").toggle();
     $('#txt_enterpasswordseed').focus();
-  })
+  });
 
   var btncancelexport = document.getElementById('exportPK_cancel');
   btncancelexport.addEventListener('click', function() { 
@@ -33330,6 +33362,19 @@ window.addEventListener('load', function load(event){
     //document.getElementById('exportPK_confirm').disabled = true;
     document.getElementById('enterpassword_PK').style.display = "none";
     $('#lbl_exporterror').html("").css('color', 'red');
+  });
+
+  
+  var addcustomnode_cancel = document.getElementById('addcustomnode_cancel');
+  addcustomnode_cancel.addEventListener('click', function() { 
+    document.getElementById('txt_nodename').value = "";
+    document.getElementById('txt_nodeurl').value = "";
+    document.getElementById('txt_nodemainport').value = "";
+    document.getElementById('txt_nodeVMport').value = "";
+    document.getElementById('txt_nodeAppport').value = "";
+
+    document.getElementById('enterCustomnode').style.display = "none";
+    $('#lbl_addcutomnode').html("");
   });
 
   var btncancelexportmnemonic = document.getElementById('exportmnemonic_cancel');
@@ -33349,6 +33394,16 @@ window.addEventListener('load', function load(event){
     document.getElementById('addtokenform').style.display = "none";
   });
 
+  var btn_cancelsendtoken = document.getElementById('btn_cancelsendtoken');
+  btn_cancelsendtoken.addEventListener('click', function() { 
+    document.getElementById("Sendtokenform").style.display = "none";
+    document.getElementById('inputtotoken').value = "";
+    document.getElementById('inputamounttoken').value = "";
+    document.getElementById('tokengas').value = "";
+    $('#btn_sendtoken').prop('disabled', true);
+    $('#inputtotoken').focus();
+  });
+
   var btnconfirm_addtoken = document.getElementById('confirm_addtoken');
   btnconfirm_addtoken.addEventListener('click', function() { 
     var tokenadress = document.getElementById('txt_tokenaddress').value;
@@ -33364,14 +33419,42 @@ window.addEventListener('load', function load(event){
       }
   });
 
-   //Allow only numbers and "." in textbox. 
-   $('#txt_decprecesion').keypress(function(event) {
-    if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
-            $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-        event.preventDefault();
+  var addcustomnode_confirm = document.getElementById('addcustomnode_confirm');
+  addcustomnode_confirm.addEventListener('click', function() {
+    var nodename = $('#txt_nodename').val().trim();
+    var nodeurl = $('#txt_nodeurl').val().trim();
+    var mainport = $('#txt_nodemainport').val().trim();
+    var VMPort = $('#txt_nodeVMport').val().trim();
+    var AppPort = $('#txt_nodeAppport').val().trim();
+
+    var Networks =[];
+    var networkinfo = {"ls_networkname":nodename,"ls_networkurl":nodeurl,"ls_mainport":mainport,"ls_VMport":VMPort,"ls_Appport":AppPort}
+
+    if (!(localStorage.getItem("CustomNetwork") === null)) {
+        var storenetworkinfo = JSON.parse(localStorage.getItem("CustomNetwork"));
+        storenetworkinfo.push(networkinfo);
+        localStorage.setItem('CustomNetwork', JSON.stringify(storenetworkinfo));
     }
-  }).on('paste', function(event) {
-    event.preventDefault();
+    else{
+        Networks.push(networkinfo);
+        localStorage.setItem('CustomNetwork', JSON.stringify(Networks));
+    }
+
+    setNetworkList();
+    document.getElementById('addcustomnode_cancel').click();
+  });
+
+  $("#txt_nodeurl,#txt_nodename,#txt_nodemainport,#txt_nodeVMport,#txt_nodeAppport").on('keyup', function() {
+    var nodeurl = $('#txt_nodeurl').val().trim();
+    var regex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    var a = regex.test(nodeurl);
+    if((a == true) && ($('#txt_nodename').val() != "") && ($('#txt_nodemainport').val() != "") && ($('#txt_nodeVMport').val() != "") && ($('#txt_nodeAppport').val() != ""))
+    {
+      $('#addcustomnode_confirm').prop('disabled', false);
+    }
+    else{
+      $('#addcustomnode_confirm').prop('disabled', true);
+    }
   });
 
   $("#txt_tokenaddress").on('keyup', function() {
@@ -33499,16 +33582,63 @@ $('#span_showMnemonic').click(function(event) {
   document.execCommand("copy");
 });
 
+var btn_sendtoken = document.getElementById('btn_sendtoken');
+btn_sendtoken.addEventListener('click', function() { 
+    var to = document.getElementById('inputtotoken').value.trim();
+    var amount = document.getElementById('inputamounttoken').value.trim();
+    var gas = document.getElementById('tokengas').value.trim();
+
+    if((to.length!=0) && (amount.length!=0)){
+      var regexp = /^(0[xX])?[A-Fa-f0-9]+$/;  //regex to check hex value
+      if((to.length == 42) && (regexp.test(to))){
+          amount = parseFloat(amount);
+          amount = amount*Math.pow(10, 18);
+          amount = String(amount);
+          var tokennonce = nonce;
+          var inputhex = CheckTokendataempty(to,amount);
+          to = to.replace('0x','');
+          inputhex = inputhex.replace('0x','');
+          var result = signTransaction(to,amount,inputhex,tokennonce,gas);
+          sendTransactionBroadcast(result,to,amount);
+      }
+      else{
+          console.log('invalid hex');
+      }
+    }
+});
+
+$("#inputtotoken,#inputamounttoken").on('keyup', function() {
+  var to = document.getElementById('inputtotoken').value.trim();
+  var amount = document.getElementById('inputamounttoken').value.trim();
+
+  var regexp = /^(0[xX])?[A-Fa-f0-9]+$/;  //regex to check hex value
+  if((to.length == 42) && (regexp.test(to)) && (amount != '')){
+    CheckTokendataempty(to,amount);
+    $('#btn_sendtoken').prop('disabled', false);
+  }
+  else{
+    $('#btn_sendtoken').prop('disabled', true);
+    $('#tokengas').val("");
+  }
+});
+
 });
 
 function sethistory(){
 
-    if (!((localStorage.getItem("ls_to") === null) && (localStorage.getItem("ls_amount") === null) && (localStorage.getItem("txid") === null))) {
-      var toaddress = localStorage.ls_to;
-      var amountbalance = localStorage.ls_amount;
-      var txid = localStorage.txid;
+  if (!(localStorage.getItem("History") === null)) {
+
+    document.getElementById('historylist').innerHTML = "";
+
+    var Historyinfo = JSON.parse(localStorage.getItem("History"));
+
+    for(var i=0; i < Historyinfo.length;i++){
+
+      var toaddress = Historyinfo[i]["ls_to"];
+      var amountbalance = Historyinfo[i]["ls_amount"];
+      var txid = Historyinfo[i]["txid"];
       amountbalance = amountbalance / 1000000000000000000;
-      var status = "nonverified";
+      var status = "confirmed";
   
       var a = '<div class="grid-container">';
       a += '<div class="item1">'+toaddress+'</div>';
@@ -33522,7 +33652,8 @@ function sethistory(){
       a += '</div>';
       
       $('#historylist').prepend(a);
-    }   
+    }
+  }
 }
 
 function getTokenSymbol(tokenadress){
@@ -33531,8 +33662,6 @@ function getTokenSymbol(tokenadress){
   if (!(localStorage.getItem("PKaddress") === null)) {
     PKaddress = localStorage.PKaddress;
   }
-
-  //var inputstring = "0x70a08231000000000000000000000000"+PKaddress;
 
   var xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
@@ -33544,7 +33673,8 @@ function getTokenSymbol(tokenadress){
         
           $.ajax({ 
             type : "POST", 
-            url : " http://192.168.51.212:5314/casigo/sDAGSymbol", 
+            //url : "http://192.168.51.212:5314/casigo/sDAGSymbol", 
+            url : "http://"+Defaultipaddress+":"+DefaultAppPort+"/casigo/sDAGSymbol", 
             dataType: "json", 
             data: JSON.stringify(jdata), 
             contentType: 'application/json', 
@@ -33566,7 +33696,8 @@ function getTokenSymbol(tokenadress){
         
       }
     };
-    xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    //xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    xhttp.open("POST","http://"+Defaultipaddress+":"+DefaultVMPort+"/esGas",true);
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
    
     var input = JSON.stringify({
@@ -33605,10 +33736,10 @@ function getTokenDecimalPrecision(tokenadress){
         else{
           $('#txt_decprecesion').val("");
         }
-        
       }
     };
-    xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    //xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    xhttp.open("POST","http://"+Defaultipaddress+":"+DefaultVMPort+"/esGas",true)
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
    
     var input = JSON.stringify({
@@ -33670,7 +33801,8 @@ function getTokenBalance(tokenadress,symbol,decimalprecision){
         setTokenList();
       }
     };
-    xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    //xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    xhttp.open("POST","http://"+Defaultipaddress+":"+DefaultVMPort+"/esGas",true)
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
    
     var input = JSON.stringify({
@@ -33702,15 +33834,24 @@ function setTokenList(){
       a += '<div class="token-list-item__token-symbol">'+bal+'</div>';
       a += '<div class="token-list-item__token-symbol" style="margin-left: 2px;">'+Tokeninfo[i]["Tsymbol"]+'</div>';
       a += '</div>';
-      a += '<div class="item2 tokenname"><i class="fas fa-share" title="Send Token"></i>';
+      a += '<div class="item2 tokenname"><i class="fas fa-share" id="'+i+'_sendtoken" title="Send Token"></i>';
       a += '<i class="fas fa-minus-circle hideicon" id="'+i+'_hidetoken" title="Hide Token"></i>';
-      a += ' </div>';  
-      a += ' </div>';    
+      a += '</div>';  
+      a += '</div>';    
       $('#showtokens').prepend(a);
       $('#'+i+'_hidetoken').on('click', function(){
         var current_tokenAddr = $(this).parent().parent().find('.inputhidden').val();
         removeTokenLocalstorage(current_tokenAddr);
         $(this).parent().parent().remove();
+      });
+      $('#'+i+'_sendtoken').on('click', function(){
+        document.getElementById("rightsidebar").style.display = "none";
+        document.getElementById("addtokenform").style.display = "none";
+        document.getElementById("Sendtokenform").style.display = "block";
+        document.getElementById('inputtotoken').value = "";
+        document.getElementById('inputamounttoken').value = "";
+        document.getElementById('tokengas').value = "";
+        $('#inputtotoken').focus();
       });
     }
   }   
@@ -33730,8 +33871,194 @@ function removeTokenLocalstorage(current_tokenAddr) {
   localStorage.setItem('Token', JSON.stringify(Tokeninfo));
 }
 
+///check if user inputs all to get Gas
+function CheckTokendataempty(to,amount) {
 
-  
+  if (( to != '') && (amount != '')) {
+    var PKaddress;
+    if (!(localStorage.getItem("PKaddress") === null)) {
+      PKaddress = localStorage.PKaddress;
+    }
+    tohex = to.replace('0x','');
+    var inputstring = "0xa9059cbb000000000000000000000000"+tohex;
+
+    amount = parseFloat(amount);
+    amount = amount*Math.pow(10, 18);
+
+    var decimal = parseInt(amount);
+    var hex = decimal.toString(16);
+
+    var appendzerocount = 64 - hex.length;
+    var hexamount = pad_with_zeroes(hex,appendzerocount);
+
+    inputstring = inputstring + hexamount;
+    console.log(inputstring);
+    getTokenGas(to,inputstring);
+    return inputstring;
+  }
+  else{
+    $('#tokengas').val("");
+  }
+}
+
+function pad_with_zeroes(number, length) {
+  var my_string = '' + number;
+  var i = 0;
+  while (i < length) {
+      my_string = '0' + my_string;
+      i++;
+  }
+  return my_string;
+}
+
+function getTokenGas(tokenadress,inputstring){
+
+  var PKaddress;
+  if (!(localStorage.getItem("PKaddress") === null)) {
+    PKaddress = localStorage.PKaddress;
+  }
+
+  var xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var data = JSON.parse(this.response);
+        console.log(this.responseText);
+        if(data.usingGas!=""){
+          $('#tokengas').val(data.usingGas);
+        }
+        else{
+          $('#tokengas').val("");
+        }
+      }
+    };
+    //xhttp.open("POST", "http://192.168.51.212:5214/esGas",true);
+    xhttp.open("POST","http://"+Defaultipaddress+":"+DefaultVMPort+"/esGas",true)
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+   
+    var input = JSON.stringify({
+      "from": PKaddress,
+      "to": tokenadress,
+      "balance": "0",
+      "nonce": 98,
+      "input":inputstring, 
+      "type":"VvmDCall"
+    });
+    xhttp.send(input);
+}
+
+function setNetworkList(){
+
+  if (!(localStorage.getItem("CustomNetwork") === null)) {
+
+    document.getElementById("CustomNetworkList").innerHTML = "";
+
+    var Networkinfo = JSON.parse(localStorage.getItem("CustomNetwork"));
+
+    for(var i=0; i < Networkinfo.length;i++){
+      console.log("Networkname: "+Networkinfo[i]["ls_networkname"]);
+
+      var ports = [Networkinfo[i]["ls_mainport"],Networkinfo[i]["ls_VMport"],Networkinfo[i]["ls_Appport"]];
+      
+      var a = '<li id="'+i+'_li" class="dropdown-menu-item" style="list-style: none; padding: 12px 0px; font-size: 16px; font-style: normal; cursor: pointer; display: flex; justify-content: flex-start; align-items: center; color: black; line-height: 20px;">';
+      a += '<i class="fa fa-check network-check__transparent" id="facheck"></i>';
+      a += '<input type="hidden" class="inputhiddenname" id="'+i+'_hdn_Networkname" value="'+Networkinfo[i]["ls_networkname"]+'">';
+      a += '<input type="hidden" class="inputhiddenurl" id="'+i+'_hdn_Networkurl" value="'+Networkinfo[i]["ls_networkurl"]+'">';
+      a += '<input type="hidden" class="inputhiddenport" id="'+i+'_hdn_NetworkPort" value="'+ports+'">';
+      //a += '<div class="network-check__transparent">✓</div>';         
+      a += '<div class="menu-icon-circle" id="menuicon">';          
+      a += '<div id="menudiv" style="background: rgb(41, 182, 175); border: none; height: 12px; width: 12px;"></div>';            
+      a += '</div>';     
+      a += '<span class="network-name-item" style="color: rgb(155, 155, 155);">'+Networkinfo[i]["ls_networkname"]+'</span>';    
+      a += '<i class="fas fa-times" id="'+i+'_hidenetwork"></i>';    
+      a += '</li>'; 
+    
+      $('#CustomNetworkList').append(a);
+      $('#'+i+'_hidenetwork').on('click', function(){
+        var current_tokenAddr = $(this).parent().find('.inputhiddenname').val();
+        removeNetworkLocalstorage(current_tokenAddr);
+        $(this).parent().remove();
+      });
+      $('#'+i+'_li').on('click', function(){
+        $('#nodepopup li').each(function(){
+          $(this).find('#facheck').addClass( "network-check__transparent" );
+          $(this).find('.network-name-item').css( "color", "rgb(155, 155, 155)");
+          $(this ).find('#menuicon').removeClass( "menu-icon-circle--active");
+          $(this ).find('#menuicon').addClass( "menu-icon-circle");
+          $(this).find('#menudiv').css( "background", "rgb(41, 182, 175)");
+          
+        });
+        $(this).find('#facheck').removeClass( "network-check__transparent");
+        $(this).find('.network-name-item').css( "color", "black");
+        $(this).find('#menudiv').css( "background", "rgb(112, 87, 255)");
+        $( this ).find('#menuicon').removeClass("menu-icon-circle");
+        $(this).find('#menuicon').addClass("menu-icon-circle--active");
+      });
+    }
+  }   
+}
+
+function removeNetworkLocalstorage(current_tokenAddr) {
+  var Tokeninfo = localStorage.getItem('CustomNetwork') ? JSON.parse(localStorage.getItem('CustomNetwork')) : [];
+  var index;
+  for (var i = 0; i < Tokeninfo.length; i++) {
+      if (Tokeninfo[i]["ls_networkname"] == current_tokenAddr) {
+        index=i;
+        break;
+      }
+  }
+  if(index === undefined) return 
+  Tokeninfo.splice(index, 1);
+  localStorage.setItem('CustomNetwork', JSON.stringify(Tokeninfo));
+}
+
+function bindDefaultNetwork(){
+  var Networks =[];
+  var networkinfo = {"ls_networkname":"GIB Test Network","ls_networkurl":"http://"+Defaultipaddress,"ls_mainport":DefaultMainport,"ls_VMport":DefaultVMPort,"ls_Appport":DefaultAppPort}
+
+  if ((localStorage.getItem("DefaultNetwork") === null)) {
+    Networks.push(networkinfo);
+    localStorage.setItem('DefaultNetwork', JSON.stringify(Networks));
+  }
+
+  document.getElementById('NetworkLi').innerHTML = "";
+
+  var Networkinfo = JSON.parse(localStorage.getItem("DefaultNetwork"));
+
+  for(var i=0; i < Networkinfo.length;i++){
+
+    var ports = [Networkinfo[i]["ls_mainport"],Networkinfo[i]["ls_VMport"],Networkinfo[i]["ls_Appport"]];
+      
+    var a = '<li id="'+i+'_defaultli" class="dropdown-menu-item" style="list-style: none; padding: 12px 0px; font-size: 16px; font-style: normal; cursor: pointer; display: flex; justify-content: flex-start; align-items: center; color: black; line-height: 20px;">';
+    a += '<i class="fa fa-check" id="facheck"></i>'
+    a += '<input type="hidden" class="inputhiddenname" id="'+i+'_hdn_DefaultNetworkname" value="'+Networkinfo[i]["ls_networkname"]+'">';
+    a += '<input type="hidden" class="inputhiddenurl" id="'+i+'_hdn_DefaultNetworkurl" value="'+Networkinfo[i]["ls_networkurl"]+'">';
+    a += '<input type="hidden" class="inputhiddenport" id="'+i+'_hdn_DefaultNetworkPort" value="'+ports+'">';
+      //a += '<div class="network-check__transparent">✓</div>';         
+    a += '<div class="menu-icon-circle--active" id="menuicon">';          
+    a += '<div id="menudiv" style="background: rgb(112, 87, 255); border: none; height: 12px; width: 12px;"></div>';            
+    a += '</div>';     
+    a += '<span class="network-name-item" style="color: rgb(155, 155, 155);">'+Networkinfo[i]["ls_networkname"]+'</span>';        
+    a += '</li>'; 
+
+    $('#NetworkLi').append(a);
+
+    $('#'+i+'_defaultli').on('click', function(){
+        $('#nodepopup li').each(function(){
+          $(this).find('#facheck').addClass( "network-check__transparent" );
+          $(this).find('.network-name-item').css( "color", "rgb(155, 155, 155)" );
+          $(this ).find('#menuicon').removeClass( "menu-icon-circle--active" );
+          $(this ).find('#menuicon').addClass( "menu-icon-circle" );
+          $(this).find('#menudiv').css( "background", "rgb(41, 182, 175)" );
+          
+        });
+        $(this).find('#facheck').removeClass( "network-check__transparent" );
+        $(this).find('.network-name-item').css( "color", "black");
+        $(this).find('#menudiv').css( "background", "rgb(112, 87, 255)");
+        $( this ).find('#menuicon').removeClass( "menu-icon-circle" );
+        $(this).find('#menuicon').addClass( "menu-icon-circle--active");
+    });
+  }
+}
 },{"aes-js":192,"crypto":63,"sdagraph":362}],192:[function(require,module,exports){
 /*! MIT License. Copyright 2015-2018 Richard Moore <me@ricmoo.com>. See LICENSE.txt. */
 (function(root) {

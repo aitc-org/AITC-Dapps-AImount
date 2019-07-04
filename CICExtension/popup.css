@@ -316,7 +316,7 @@ body{
         font-size: 40px;
         color: #4d4d4d;
         position: absolute;
-        top: 12px;
+        /*top: 12px;*/
         left: 12px;
         cursor: pointer;
     }
@@ -391,7 +391,7 @@ body{
         white-space: nowrap;
     }    
     .menu-icon-circle--active {
-        border: 1px solid blue;
+        /*border: 1px solid blue;*/
         background: rgba(100, 100, 100, 0.4);
     }
     .transaction-view-balance__buttons {
@@ -457,12 +457,7 @@ body{
         cursor: pointer;
         overflow: hidden;
     }
-    .transaction-list {
-       /*display: flex;
-        flex-direction: column;
-        flex: 1;*/
-        margin-top: 8px;
-    }
+    
     .transaction-list__transactions {
         color: black;
         flex: 1;
@@ -722,12 +717,12 @@ body{
         /*justify-content: center;*/
         align-items: center;
         flex: 0 0 auto;
-        margin-bottom: 16px;
+        /*margin-bottom: 16px;*/
         padding: 5px;
         border-bottom: 1px solid #e5e5e5;
     }
     .menu-bar__sidebar-button {
-        font-size: 1.5rem;
+        font-size: x-large;
         cursor: pointer;
         padding: 10px;
     }
@@ -810,3 +805,12 @@ body{
         background: rgba(201,223,138,0.2);
     }
     
+    .button[disabled] {
+        cursor: not-allowed;
+    }
+
+    #nodepopup li:hover{
+        background: rgba(201,223,138,0.5);
+    }
+
+  
