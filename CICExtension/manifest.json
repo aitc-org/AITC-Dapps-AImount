@@ -6,8 +6,8 @@
   "version": "1.0",
   
   "browser_action": {
-   "default_icon": "Image/CI_logo-01.png",
-   "default_popup": "setpassword.html"
+  "default_icon": "Image/tac-logo.png",
+  "default_popup": "setpassword.html"
   },
   "icons": { "16": "Image/CI_logo-01.png",
     "48": "Image/CI_logo-01.png",

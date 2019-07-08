@@ -33018,7 +33018,6 @@ const crypto = require('crypto');
 const sdag = require('sdagraph');
 var aesjs = require('aes-js');
 
-
 var nonce;
 var settransactionlocal;
 var a = "";
@@ -33036,11 +33035,9 @@ var DefaultAppPort = '5314';
 
 
 function signTransaction(to,amount,inputhex,nonce,gas){
-    //nonce = getNonce();
-    //console.log(nonce);
+    
     var pk;
     if (!(localStorage.getItem("PK") === null)) {
-      //pk = localStorage.PK;
       pk = DecryptPrivateKey(localStorage.PK);
     }
     if(gas == ""){
@@ -33058,7 +33055,6 @@ function signTransaction(to,amount,inputhex,nonce,gas){
       Input : inputhex
     }  
     let transaction = new sdag.Signs.NewTransaction(pk,tx)
-    //Sign Transaction using GetSignRawHexFull() and use output result for broadcast.
     var signtrans = transaction.GetSignRawHexFull();
     var result = signtrans.result;
     console.log(result);
@@ -33087,10 +33083,6 @@ function sendTransactionBroadcast(result,to,amount){
       document.getElementById("sendtrform").style.display = "none";
       document.getElementById("Sendtokenform").style.display = "none";
       console.log('new nonce:'+nonce);
-
-      /*localStorage.ls_to = to;
-      localStorage.ls_amount = amount;
-      localStorage.txid = json;*/
 
       var History =[];
       var historyinfo = {"ls_to":to,"ls_amount":amount,"txid":json}
@@ -33136,7 +33128,6 @@ function DecryptPrivateKey(encryptedHex){
     password = localStorage.password;
   }
 
-  //var password = $('#newpassword').val().trim();
   var passwordtohex = toHex(password);
   var hextodec = hextodecimal(passwordtohex);
   console.log('Decrypt password to hex: '+password);
@@ -33149,13 +33140,6 @@ function DecryptPrivateKey(encryptedHex){
   } 
 
   key = arr;
-
-  /*
-  if (!(localStorage.getItem("quentinTarantino") === null)) {
-    var retrievedData = localStorage.getItem("quentinTarantino");
-    key = JSON.parse(retrievedData);
-  }
-  */
 
   //var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
   // When ready to decrypt the hex string, convert it back to bytes
@@ -33276,9 +33260,8 @@ function getBalance() {
 }
 }
 
-
+//Start of Page load event.
 window.addEventListener('load', function load(event){
-
 
   if (!(localStorage.getItem("PK") === null)) {
     pri = DecryptPrivateKey(localStorage.PK);
@@ -33288,13 +33271,13 @@ window.addEventListener('load', function load(event){
     localStorage.PKaddress = account2.Address;
   }
   else{
-
     localStorage.clear();
     chrome.browserAction.setPopup({
       popup:"setpassword.html"
     });
     window.location.href = 'setpassword.html';
   }
+
   getBalance();
   setTokenList();
   setNetworkList();
@@ -33322,9 +33305,8 @@ window.addEventListener('load', function load(event){
 
   var creatediv = document.getElementById('clk_logout');
   creatediv.addEventListener('click', function() { 
-    //var password = localStorage.getItem('password');
+   
     localStorage.clear();
-    //localStorage.setItem('password',password);
 
     chrome.browserAction.setPopup({
       popup:"setpassword.html"
@@ -33344,7 +33326,6 @@ window.addEventListener('load', function load(event){
 
   var enterPKdiv = document.getElementById('div_show_PK');
   enterPKdiv.addEventListener('click', function() { 
-    //document.getElementById('enterpassword_PK').style.display = "block";
     document.getElementById('showPkdiv').style.display = "none";
     $('#enterpassword_PK').toggle();
     $('#txt_enterseed').focus();
@@ -33359,12 +33340,10 @@ window.addEventListener('load', function load(event){
   var btncancelexport = document.getElementById('exportPK_cancel');
   btncancelexport.addEventListener('click', function() { 
     document.getElementById('txt_enterseed').value = "";
-    //document.getElementById('exportPK_confirm').disabled = true;
     document.getElementById('enterpassword_PK').style.display = "none";
     $('#lbl_exporterror').html("").css('color', 'red');
   });
 
-  
   var addcustomnode_cancel = document.getElementById('addcustomnode_cancel');
   addcustomnode_cancel.addEventListener('click', function() { 
     document.getElementById('txt_nodename').value = "";
@@ -33380,7 +33359,6 @@ window.addEventListener('load', function load(event){
   var btncancelexportmnemonic = document.getElementById('exportmnemonic_cancel');
   btncancelexportmnemonic.addEventListener('click', function() { 
     document.getElementById('txt_enterpasswordseed').value = "";
-    //document.getElementById('exportPK_confirm').disabled = true;
     document.getElementById('enterpassword_seed').style.display = "none";
     $('#lbl_mnemonic_exporterror').html("").css('color', 'red');
   });
@@ -33535,13 +33513,11 @@ window.addEventListener('load', function load(event){
           document.getElementById('span_showPK').innerHTML = PK;
         
           document.getElementById('txt_enterseed').value = "";
-          //document.getElementById('exportPK_confirm').disabled = true;
           document.getElementById('enterpassword_PK').style.display = "none";
         }
         $('#lbl_exporterror').html("").css('color', 'red');
       }
       else{
-        //document.getElementById('lbl_exporterror').innerHTML = "Incorrect seed phrase";
         $('#lbl_exporterror').html("Incorrect password").css('color', 'red');
       }
     }
@@ -33565,13 +33541,11 @@ window.addEventListener('load', function load(event){
         document.getElementById('span_showMnemonic').innerHTML = MnemonicWords;
       
         document.getElementById('txt_enterpasswordseed').value = "";
-        //document.getElementById('exportPK_confirm').disabled = true;
         document.getElementById('enterpassword_seed').style.display = "none";
       }
       $('#lbl_mnemonic_exporterror').html("").css('color', 'red');
     }
     else{
-      //document.getElementById('lbl_exporterror').innerHTML = "Incorrect seed phrase";
       $('#lbl_mnemonic_exporterror').html("Incorrect password").css('color', 'red');
     }
   }
@@ -33623,6 +33597,7 @@ $("#inputtotoken,#inputamounttoken").on('keyup', function() {
 });
 
 });
+//End of pageload event
 
 function sethistory(){
 
@@ -33725,7 +33700,6 @@ function getTokenDecimalPrecision(tokenadress){
         console.log(this.responseText);
         if(data.ret!=""){
           var hex = data.ret;
-          //console.log("Decimal"+hex)
           var decimalprecision = hextodecimal(hex);
           $('#txt_decprecesion').val(decimalprecision);
 
@@ -33975,6 +33949,7 @@ function setNetworkList(){
       $('#CustomNetworkList').append(a);
       $('#'+i+'_hidenetwork').on('click', function(){
         var current_tokenAddr = $(this).parent().find('.inputhiddenname').val();
+        $('#setNetworkname').html("GIB Test Network");
         removeNetworkLocalstorage(current_tokenAddr);
         $(this).parent().remove();
       });
@@ -33985,13 +33960,15 @@ function setNetworkList(){
           $(this ).find('#menuicon').removeClass( "menu-icon-circle--active");
           $(this ).find('#menuicon').addClass( "menu-icon-circle");
           $(this).find('#menudiv').css( "background", "rgb(41, 182, 175)");
-          
         });
         $(this).find('#facheck').removeClass( "network-check__transparent");
         $(this).find('.network-name-item').css( "color", "black");
         $(this).find('#menudiv').css( "background", "rgb(112, 87, 255)");
-        $( this ).find('#menuicon').removeClass("menu-icon-circle");
+        $(this).find('#menuicon').removeClass("menu-icon-circle");
         $(this).find('#menuicon').addClass("menu-icon-circle--active");
+        var current_networkname = $(this).find('.inputhiddenname').val();
+        $('#setNetworkname').html(current_networkname);
+        localStorage.setItem('SelectedNetwork',current_networkname);
       });
     }
   }   
@@ -34006,7 +33983,7 @@ function removeNetworkLocalstorage(current_tokenAddr) {
         break;
       }
   }
-  if(index === undefined) return 
+  if(index === undefined) return; 
   Tokeninfo.splice(index, 1);
   localStorage.setItem('CustomNetwork', JSON.stringify(Tokeninfo));
 }
@@ -34033,7 +34010,6 @@ function bindDefaultNetwork(){
     a += '<input type="hidden" class="inputhiddenname" id="'+i+'_hdn_DefaultNetworkname" value="'+Networkinfo[i]["ls_networkname"]+'">';
     a += '<input type="hidden" class="inputhiddenurl" id="'+i+'_hdn_DefaultNetworkurl" value="'+Networkinfo[i]["ls_networkurl"]+'">';
     a += '<input type="hidden" class="inputhiddenport" id="'+i+'_hdn_DefaultNetworkPort" value="'+ports+'">';
-      //a += '<div class="network-check__transparent">✓</div>';         
     a += '<div class="menu-icon-circle--active" id="menuicon">';          
     a += '<div id="menudiv" style="background: rgb(112, 87, 255); border: none; height: 12px; width: 12px;"></div>';            
     a += '</div>';     
@@ -34044,18 +34020,19 @@ function bindDefaultNetwork(){
 
     $('#'+i+'_defaultli').on('click', function(){
         $('#nodepopup li').each(function(){
-          $(this).find('#facheck').addClass( "network-check__transparent" );
-          $(this).find('.network-name-item').css( "color", "rgb(155, 155, 155)" );
-          $(this ).find('#menuicon').removeClass( "menu-icon-circle--active" );
-          $(this ).find('#menuicon').addClass( "menu-icon-circle" );
-          $(this).find('#menudiv').css( "background", "rgb(41, 182, 175)" );
-          
+          $(this).find('#facheck').addClass("network-check__transparent");
+          $(this).find('.network-name-item').css("color", "rgb(155, 155, 155)");
+          $(this).find('#menuicon').removeClass("menu-icon-circle--active");
+          $(this).find('#menuicon').addClass("menu-icon-circle");
+          $(this).find('#menudiv').css("background", "rgb(41, 182, 175)"); 
         });
-        $(this).find('#facheck').removeClass( "network-check__transparent" );
-        $(this).find('.network-name-item').css( "color", "black");
-        $(this).find('#menudiv').css( "background", "rgb(112, 87, 255)");
-        $( this ).find('#menuicon').removeClass( "menu-icon-circle" );
-        $(this).find('#menuicon').addClass( "menu-icon-circle--active");
+        $(this).find('#facheck').removeClass("network-check__transparent");
+        $(this).find('.network-name-item').css("color", "black");
+        $(this).find('#menudiv').css("background", "rgb(112, 87, 255)");
+        $(this).find('#menuicon').removeClass("menu-icon-circle");
+        $(this).find('#menuicon').addClass("menu-icon-circle--active");
+        var current_networkname = $(this).find('.inputhiddenname').val();
+        $('#setNetworkname').html(current_networkname);
     });
   }
 }

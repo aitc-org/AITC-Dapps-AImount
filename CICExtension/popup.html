@@ -20,8 +20,10 @@
         <div class="app-header app-header--back-drop">
           <div class="app-header__contents">
             <div class="app-header__logo-container">
-              <img class="app-header__metafox-logo app-header__metafox-logo--horizontal" height="30" src="Image/CI_logo-01.png">
-              <img class="app-header__metafox-logo app-header__metafox-logo--icon" height="42" width="48" src="Image/CI_logo-01.png">
+              <!-- <img class="app-header__metafox-logo app-header__metafox-logo--horizontal" height="30" src="Image/CI_logo-01.png">
+              <img class="app-header__metafox-logo app-header__metafox-logo--icon" height="42" width="48" src="Image/CI_logo-01.png"> -->
+              <img class="app-header__metafox-logo app-header__metafox-logo--horizontal" height="30" src="Image/tac-logo.png">
+              <img class="app-header__metafox-logo app-header__metafox-logo--icon" height="42" width="48" src="Image/tac-logo.png">
             </div>
             <div class="app-header__account-menu-container">
               <div class="app-header__network-component-wrapper">
@@ -30,7 +32,7 @@
                     <div class="menu-icon-circle">
                       <div style="background: rgb(105, 4, 150); border: none; height: 12px; width: 12px; border-radius: 22px"></div>
                     </div>
-                    <div class="network-name">GIB Test Network</div>
+                    <div class="network-name" id="setNetworkname">GIB Test Network</div>
                     <i class="fa fa-chevron-down fa-lg network-caret"></i>
                   </div>
                 </div>
@@ -56,6 +58,7 @@
               <div class="network-dropdown-content">The default network is GIB Test Network.</div>
             </div>   
             <div id="NetworkLi">
+              <!-- Append dynamically Default Network here -->
                   <!-- <li class="dropdown-menu-item" style="list-style: none; padding: 12px 0px; font-size: 16px; font-style: normal; cursor: pointer; display: flex; justify-content: flex-start; align-items: center; color: black; line-height: 20px;">
                     <i class="fa fa-check" id="facheck" style="display: block"></i>
                     <div class="menu-icon-circle--active" id="menuicon">
@@ -64,7 +67,9 @@
                     <span class="network-name-item" style="color:black;">GIB Test Network</span>
                   </li>  -->
             </div>
-            <div id="CustomNetworkList"></div>
+            <div id="CustomNetworkList">
+              <!-- Append dynamically Custom Network here -->
+            </div>
             <div class="network-dropdown-header">
               <div class="network-dropdown-divider"></div>
               <div class="network-name-item" style="color: blue; cursor:pointer" id="div_addcustomnode">Add Custom Node</div>
@@ -104,7 +109,7 @@
             <div class="network-dropdown-title">Token List</div>
           </div>
           <div id="showtokens">
-            <!--Dynamically fill this-->
+            <!-- Append dynamically tokens here -->
           </div>
           
           <div class="grid-container" style="background: none">
@@ -297,7 +302,7 @@
                     <div class="transaction-list__completed-transactions">
                       <div class="transaction-list__header">History</div>
                       <div id="historylist">
-                       
+                       <!-- Append dynamically transaction history here -->
                       </div>
                     </div>
                   </div>

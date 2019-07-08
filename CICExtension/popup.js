@@ -4,6 +4,7 @@ $(document).ready(function() {
   });
 
   $('#settingdropdown').click(function(){
+    document.getElementById("nodepopup").style.display = "none";
     $('#settingspopup').toggle();
   });
 

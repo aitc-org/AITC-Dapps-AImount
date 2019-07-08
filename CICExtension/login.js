@@ -4,12 +4,10 @@ $(document).ready(function() {
     });
 
     $('#btn_importwallet').click(function(){
-      //$('#enterPKform').toggle();
       $('#importwalletoptions').toggle();
       document.getElementById('enterPKform').style.display = "none";
       document.getElementById('enterMnemonicform').style.display = "none";
       document.getElementById('CreateWallet').style.display = "none";
-      //$('#inputPK').focus();
     });
 
     $('#btn_createwallet').click(function(){
@@ -39,49 +37,14 @@ $(document).ready(function() {
 
     $('#btncancelPK').click(function(){
         document.getElementById('enterPKform').style.display = "none";
+        document.getElementById('importwalletoptions').style.display = "block";
     });
-
-    /*
-    $('#newpassword').on('keyup', function () {
-        if($('#newpassword').val().length < 8){
-            $('#lbl_passworderror').html('Password not long enough').css('color', 'red');
-        }
-        else 
-        {
-            $('#lbl_passworderror').html('');
-        }
-        if(($('#newpassword').val().length >= 8)){
-            $('#btn_confirmcreate').prop('disabled', false);
-        }
-        else{
-            $('#btn_confirmcreate').prop('disabled', true);
-        }
-    });
-
-    $('#importwalletpassword').on('keyup', function () {
-        if($('#importwalletpassword').val().length < 8){
-            $('#lbl_importwalletpassworderror').html('Password not long enough').css('color', 'red');
-        }
-        else 
-        {
-            $('#lbl_importwalletpassworderror').html('');
-        }
-        if(($('#importwalletpassword').val().length >= 8)){
-            $('#btn_confirmimportwallet').prop('disabled', false);
-        }
-        else{
-            $('#btn_confirmimportwallet').prop('disabled', true);
-        }
-    });
-    */
 
     $("#txt_seedphrase").on('keyup', function() {
         if(this.value != ""){
             var words = this.value.match(/\S+/g).length;
             if (words > 12) {
-                // Split the string on first 200 words and rejoin on spaces
                 var trimmed = $(this).val().split(/\s+/, 12).join(" ");
-                // Add a space at the end to keep new typing making new words
                 $(this).val(trimmed + " ");
             }
         }
@@ -99,8 +62,6 @@ $(document).ready(function() {
     });
 
     $('#btn_cancelcreate').click(function(){
-        //$('#newpassword').val('');
-        //$('#lbl_passworderror').html('');
         document.getElementById('CreateWallet').style.display = "none";
     });
 

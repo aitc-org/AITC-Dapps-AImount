@@ -53,8 +53,7 @@ window.addEventListener('load', function load(event){
   var btnconfirmcreatewallet = document.getElementById('btn_confirmcreate');
   btnconfirmcreatewallet.addEventListener('click', function() {
     var seedphrase = mnemonic.trim();
-    //var password = $('#newpassword').val().trim();
-
+   
     var seed = bip39.mnemonicToSeedSync(mnemonic).toString('hex');
     console.log('Seed'+seed);
 
@@ -73,10 +72,6 @@ window.addEventListener('load', function load(event){
     console.log('publicAddress '+publicAddress);
     console.log('cicAddress '+cicAddress);
 
-    //var encryptseed = Encrypt(seedphrase);
-    //console.log(encryptseed);
-    //localStorage.setItem("encryptedseed",encryptseed);
-
     document.getElementById('CreateWallet').style.display = "none";
     document.getElementById('importwalletoptions').style.display = "block";
   });
@@ -94,8 +89,6 @@ window.addEventListener('load', function load(event){
     
       localStorage.setItem("encryptedseedimport",encryptseed);
     
-      //var cicAddress = $('#span_showaddress').text().trim();
-      //localStorage.setItem('PKaddress', cicAddress);
       var encryptPrivatekey = Encrypt(PrivateKey);
       localStorage.setItem('PK',encryptPrivatekey);
 
@@ -115,6 +108,8 @@ window.addEventListener('load', function load(event){
     $('#txt_importwalletderivepath').val("m/44'/0'/0'/0/0");
     $('#span_showaddress').text("");
     $('#btn_confirmimportwallet').prop('disabled', true);
+    document.getElementById('enterMnemonicform').style.display = "none";
+    document.getElementById('importwalletoptions').style.display = "block";
   });
 
   $("#txt_seedphrase, #txt_importwalletderivepath").on('keyup', function() {
@@ -135,7 +130,7 @@ window.addEventListener('load', function load(event){
        bitcoinKey = child.toWIF()
        var key = bitcoin.HDPrivateKey(HDkey);
        var wallet = new EthereumBip44(key);
-       //ethereum
+      
        var ethereumKey = wallet.getPrivateKey(0).toString('hex')
        console.log('PK:'+ethereumKey); //Private key
        PrivateKey = ethereumKey;
@@ -168,7 +163,6 @@ function Encrypt(strdata){
     password = localStorage.password;
   }
 
-  //var password = $('#newpassword').val().trim();
   var passwordtohex = toHex(password);
   var hextodec = hextodecimal(passwordtohex);
   console.log('password to hex: '+password);
@@ -182,17 +176,11 @@ function Encrypt(strdata){
 
     //var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
     var key = arr;
-    //localStorage.setItem("quentinTarantino", JSON.stringify(key));
-  
-    // Convert text to bytes
+   
     var text = strdata;
     var textBytes = aesjs.utils.utf8.toBytes(text);
-    
-    // The counter is optional, and if omitted will begin at 1
     var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
     var encryptedBytes = aesCtr.encrypt(textBytes);
-    
-    // To print or store the binary data, you may convert it to hex
     var encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
     console.log(encryptedHex);
     return encryptedHex;
@@ -201,17 +189,10 @@ function Encrypt(strdata){
   function DecryptPrivateKey(encryptedHex){
     var key;
     var password;
-    /*
-    if (!(localStorage.getItem("quentinTarantino") === null)) {
-      var retrievedData = localStorage.getItem("quentinTarantino");
-      key = JSON.parse(retrievedData);
-    }*/
 
     if (!(localStorage.getItem("password") === null)) {
       password = localStorage.password;
     }
-  
-    //var password = $('#newpassword').val().trim();
     var passwordtohex = toHex(password);
     var hextodec = hextodecimal(passwordtohex);
     console.log('Decrypt password to hex: '+password);
@@ -224,21 +205,16 @@ function Encrypt(strdata){
     } 
   
     key = arr;
-
-    //var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
-    // When ready to decrypt the hex string, convert it back to bytes
     var encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex);
     
-    // The counter mode of operation maintains internal state, so to
-    // decrypt a new instance must be instantiated.
     var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
     var decryptedBytes = aesCtr.decrypt(encryptedBytes);
     
-    // Convert our bytes back into text
     var decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
     console.log(decryptedText);
     return decryptedText;
   }
+
   //convert string into hex function
   function toHex(str) {
     var hex = '';
