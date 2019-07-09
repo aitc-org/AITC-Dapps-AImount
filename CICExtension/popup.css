@@ -54,10 +54,6 @@ body{
     cursor: pointer;
 }
 
-.app-header__metafox-logo {
-    cursor: pointer;
-}
-
 .app-header__account-menu-container {
     display: flex;
     flex-flow: row nowrap;
@@ -161,8 +157,8 @@ body{
     min-height: 0;
     width: 100%;
     color: #4d4d4d;
-    /* background-image: url("Image/CICogo.png"); */
-    background-image: url("https://bionutriciaextract.com/wp-content/uploads/2018/11/bio-nutricia-extract-tongkat-ali-long-jack-powder-manufacture.jpg");
+    background-image: url("Image/CICogo.png");
+    /* background-image: url("https://bionutriciaextract.com/wp-content/uploads/2018/11/bio-nutricia-extract-tongkat-ali-long-jack-powder-manufacture.jpg"); */
 }
 .main-container {
     z-index: 18;
@@ -253,8 +249,8 @@ body{
     }
     .main-container-wrapper {
         flex: 1;
-        /* background-image: url("Image/logo3.png"); */
-        background-image: url("https://bionutriciaextract.com/wp-content/uploads/2018/11/bio-nutricia-extract-tongkat-ali-long-jack-powder-manufacture.jpg");
+        background-image: url("Image/logo3.png");
+        /* background-image: url("https://bionutriciaextract.com/wp-content/uploads/2018/11/bio-nutricia-extract-tongkat-ali-long-jack-powder-manufacture.jpg"); */
     }
     .main-container {
         width: 100%;

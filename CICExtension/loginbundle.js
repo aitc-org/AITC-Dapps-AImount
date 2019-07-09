@@ -25236,6 +25236,14 @@ window.addEventListener('load', function load(event){
     }
   });
 
+  $('#logoclick').on('click',function(){
+    localStorage.clear();
+    chrome.browserAction.setPopup({
+      popup:"setpassword.html"
+    });
+    window.location.href = 'setpassword.html';
+  });
+
 });
 
 function Encrypt(strdata){
