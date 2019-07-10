@@ -57,7 +57,7 @@ $(document).ready(function() {
       console.log("Tokenaddr:"+data[0]);
       $("#sendtr").click();
 
-      if (!(localStorage.getItem("Token") === null)) {
+        if (!(localStorage.getItem("Token") === null)) {
         var Tokeninfo = JSON.parse(localStorage.getItem("Token"));
         if(Tokeninfo.length > 0){
           var tokenaddr = "0x"+data[0].trim();
@@ -67,7 +67,11 @@ $(document).ready(function() {
               $("#inputamount").val("0");
               $("#inputhex").val(data[2].trim());
               $('#lbl_sendtr').html("");
-              document.getElementById('span_showtokenfromweb').innerHTML = Tokeninfo[i]["Tsymbol"].trim();
+              var symbol = Tokeninfo[i]["Tsymbol"].trim();
+              if(symbol == "GIBT"){
+                symbol = "TAC";
+              }
+              document.getElementById('span_showtokenfromweb').innerHTML = symbol;
               document.getElementById('span_showtokenamountfromweb').innerHTML = data[1].trim();
               document.getElementById('Showfromweb').style.display="block";
               delete localStorage.sharedData;
@@ -88,6 +92,12 @@ $(document).ready(function() {
           $('#lbl_sendtr').html("Please Add Token First").css('color', 'red');
           delete localStorage.sharedData;
         }
+      }
+      else{
+        $("#SendTrForm").find("*").prop('disabled', true);
+        document.getElementById('Showfromweb').style.display="none";
+        $('#lbl_sendtr').html("Please Add Token First").css('color', 'red');
+        delete localStorage.sharedData;
       }
     }
    

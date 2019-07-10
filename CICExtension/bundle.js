@@ -33073,6 +33073,7 @@ function sendTransactionBroadcast(result,to,amount){
     contentType: 'text/plain; charset=UTF-8', 
     success:function(json){ 
       console.log(json);
+     
       var minus = ShowBalance - amount;
       var newetherprice = minus / 1000000000000000000;
       console.log(newetherprice);
@@ -33085,7 +33086,16 @@ function sendTransactionBroadcast(result,to,amount){
       console.log('new nonce:'+nonce);
 
       var History =[];
-      var historyinfo = {"ls_to":to,"ls_amount":amount,"txid":json}
+
+      if (!(localStorage.getItem("openwindow") === null)) {
+        var tokenamount = document.getElementById("span_showtokenamountfromweb").innerHTML;
+        var Tokensymbol = document.getElementById("span_showtokenfromweb").innerHTML;
+        var historyinfo = {"ls_to":to,"ls_amount":tokenamount,"txid":json,"ls_symbol":Tokensymbol}
+      }
+      else{
+        amount = amount / 1000000000000000000;
+        var historyinfo = {"ls_to":to,"ls_amount":amount,"txid":json,"ls_symbol":"CIC"}
+      }
 
       if (!(localStorage.getItem("History") === null)) {
         var storeHistoryinfo = JSON.parse(localStorage.getItem("History"));
@@ -33385,10 +33395,19 @@ window.addEventListener('load', function load(event){
   var btnconfirm_addtoken = document.getElementById('confirm_addtoken');
   btnconfirm_addtoken.addEventListener('click', function() { 
     var tokenadress = document.getElementById('txt_tokenaddress').value;
-    var symbol = document.getElementById('txt_tokensymbol').value;
+    var symbol = document.getElementById('hdn_tokensymbol').value;
+    var symboltxt = document.getElementById('txt_tokensymbol').value;
     var decimalprecision = document.getElementById('txt_decprecesion').value;
+
+    //only for demo start
+
+    if(symbol == ""){
+      symbol = symboltxt;
+    }
     
-    if((tokenadress!="") && (symbol!="") && (decimalprecision!="")){
+    //only for demo finish
+
+    if((tokenadress!="") && (symboltxt!="") && (decimalprecision!="")){
       
       getTokenBalance(tokenadress,symbol,decimalprecision);
 
@@ -33435,7 +33454,7 @@ window.addEventListener('load', function load(event){
     }
   });
 
-  $("#txt_tokenaddress").on('keyup', function() {
+  $("#txt_tokenaddress").on('change', function() {
 
     var to = this.value.trim();
     if(to != ""){
@@ -33471,6 +33490,9 @@ window.addEventListener('load', function load(event){
     }
     else{
       $('#confirm_addtoken').prop('disabled', true);
+      $('#txt_tokensymbol').val("");
+      $('#txt_decprecesion').val("");
+      $('#lbl_addtokenerror').html("");
     }
 
   });
@@ -33612,15 +33634,16 @@ function sethistory(){
       var toaddress = Historyinfo[i]["ls_to"];
       var amountbalance = Historyinfo[i]["ls_amount"];
       var txid = Historyinfo[i]["txid"];
-      amountbalance = amountbalance / 1000000000000000000;
+      //amountbalance = amountbalance / 1000000000000000000;
       var status = "confirmed";
+      var symbol = Historyinfo[i]["ls_symbol"];
   
       var a = '<div class="grid-container">';
       a += '<div class="item1">'+toaddress+'</div>';
       a += '<div class="item2">Contract Interaction</div>';
       a += '<div class="item3" style="text-align:right">';
       a += '<span class="currency-display-component__text">-'+amountbalance+'</span>';
-      a += '<span class="currency-display-component__suffix">CIC</span>';
+      a += '<span class="currency-display-component__suffix">'+symbol+'</span>';
       a += '</div>';
       a += '<div class="item4"><span class="transaction-status--confirmed">'+status+'</span></div>';
       a += '<div class="item5"><span class="span_txid">'+"txid: "+txid+'</span></div>';
@@ -33654,8 +33677,9 @@ function getTokenSymbol(tokenadress){
             data: JSON.stringify(jdata), 
             contentType: 'application/json', 
             success:function(json){ 
-              $('#txt_tokensymbol').val(json["symbol"]);
-
+              // $('#txt_tokensymbol').val(json["symbol"]);
+              $('#txt_tokensymbol').val('TAC');  //for only demo 
+              document.getElementById('hdn_tokensymbol').value = json["symbol"];
               if(($("#txt_tokensymbol").val().length != 0) && ($("#txt_decprecesion").val().length != 0)){
                 $('#confirm_addtoken').prop('disabled', false);
               }
@@ -33667,6 +33691,7 @@ function getTokenSymbol(tokenadress){
         }
         else{
           $('#txt_tokensymbol').val("");
+          document.getElementById('hdn_tokensymbol').value ="";
         }
         
       }
@@ -33679,7 +33704,8 @@ function getTokenSymbol(tokenadress){
       "from": PKaddress,
       "to": tokenadress,
       "balance": "0",
-      "nonce": 98,
+      // "nonce": 98,
+      "nonce": nonce,
       "input":"0x95d89b41", 
       "type":"VvmDCall"
     });
@@ -33720,7 +33746,7 @@ function getTokenDecimalPrecision(tokenadress){
       "from": PKaddress,
       "to": tokenadress,
       "balance": "0",
-      "nonce": 98,
+      "nonce": nonce,
       "input":"0x313ce567", 
       "type":"VvmDCall"
     });
@@ -33783,7 +33809,7 @@ function getTokenBalance(tokenadress,symbol,decimalprecision){
       "from": PKaddress,
       "to": tokenadress,
       "balance": "0",
-      "nonce": 98,
+      "nonce": nonce,
       "input":inputstring, 
       "type":"VvmDCall"
     });
@@ -33801,14 +33827,21 @@ function setTokenList(){
     for(var i=0; i < Tokeninfo.length;i++){
       console.log("Taddress: "+Tokeninfo[i]["TAddress"]);
       var bal = Tokeninfo[i]["TBalance"] / 1000000000000000000
+
+      var symbol = Tokeninfo[i]["Tsymbol"];
+      if(symbol == "GIBT"){
+        symbol = "TAC";
+      }
    
       var a = '<div class="grid-container tokenbackground settokenbackground">';
       a += '<div class="item3 showbal">';
       a += '<input type="hidden" class="inputhidden" id="'+i+'_hdn_Tokenaddress" value="'+Tokeninfo[i]["TAddress"]+'">';
+      a += '<input type="hidden" class="inputhidden" id="'+i+'_hdn_Tokensymbol" value="'+Tokeninfo[i]["Tsymbol"]+'">';
+      a += '<input type="hidden" class="inputhidden" id="'+i+'_hdn_TokenPrecision" value="'+Tokeninfo[i]["Tdecimal"]+'">';
       a += '<div class="token-list-item__token-symbol">'+bal+'</div>';
-      a += '<div class="token-list-item__token-symbol" style="margin-left: 2px;">'+Tokeninfo[i]["Tsymbol"]+'</div>';
+      a += '<div class="token-list-item__token-symbol" style="margin-left: 2px;">'+symbol+'</div>';
       a += '</div>';
-      a += '<div class="item2 tokenname"><i class="fas fa-share" id="'+i+'_sendtoken" title="Send Token"></i>';
+      a += '<div class="item2 tokenname settokeninfocolor"><i class="fas fa-share" id="'+i+'_sendtoken" title="Send Token"></i>';
       a += '<i class="fas fa-minus-circle hideicon" id="'+i+'_hidetoken" title="Hide Token"></i>';
       a += '</div>';  
       a += '</div>';    
@@ -34035,6 +34068,42 @@ function bindDefaultNetwork(){
         $('#setNetworkname').html(current_networkname);
     });
   }
+}
+
+function updateTokenBalance(tokenadress,symbol,decimalprecision){
+
+  var PKaddress;
+  if (!(localStorage.getItem("PKaddress") === null)) {
+    PKaddress = localStorage.PKaddress;
+  }
+
+  var inputstring = "0x70a08231000000000000000000000000"+PKaddress;
+
+  var xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var data = JSON.parse(this.response);
+        console.log(this.responseText);
+        if(data.ret!=""){
+          var hex = data.ret;
+          var balance = hextodecimal(hex);
+          UpdateTokenBal = balance;
+        }
+       
+      }
+    };
+    xhttp.open("POST","http://"+Defaultipaddress+":"+DefaultVMPort+"/esGas",true)
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+   
+    var input = JSON.stringify({
+      "from": PKaddress,
+      "to": tokenadress,
+      "balance": "0",
+      "nonce": nonce,
+      "input":inputstring, 
+      "type":"VvmDCall"
+    });
+    xhttp.send(input);
 }
 },{"aes-js":192,"crypto":63,"sdagraph":362}],192:[function(require,module,exports){
 /*! MIT License. Copyright 2015-2018 Richard Moore <me@ricmoo.com>. See LICENSE.txt. */

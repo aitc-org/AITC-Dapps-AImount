@@ -553,7 +553,7 @@ body{
         box-sizing: border-box;
         border-radius: 6px;
         width: 136px;
-        height: 70px;
+        height: 40px;
         background-color: transparent;
     }
     .savePKbutton{
@@ -809,6 +809,10 @@ body{
 
     #nodepopup li:hover{
         background: rgba(201,223,138,0.5);
+    }
+
+    .settokeninfocolor{
+        color:green;
     }
 
   
