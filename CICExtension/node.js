@@ -12,7 +12,8 @@ var pri = "";
 //check token address
 var validTokenaddress = true;
 
-var Defaultipaddress = '192.168.51.212';
+// var Defaultipaddress = '192.168.51.212';
+var Defaultipaddress = '125.227.132.130';
 var DefaultMainport = '9999';
 var DefaultVMPort = '5214';
 var DefaultAppPort = '5314';
@@ -108,7 +109,7 @@ function sendTransactionBroadcast(result,to,amount){
       
     }, 
     error: function() { 
-    alert("Error"); 
+      alert("Error"); 
     } 
     }); 
 }
@@ -276,6 +277,12 @@ window.addEventListener('load', function load(event){
   setTokenList();
   setNetworkList();
   bindDefaultNetwork();
+
+  $('#sidebarmenu').click(function(){
+    document.getElementById("settingspopup").style.display = "none";
+    updateTokenBalance();
+    $("#rightsidebar").toggle("slide");
+  });
     
   var createButton = document.getElementById('send');
   createButton.addEventListener('click', function() { 
@@ -820,9 +827,9 @@ function setTokenList(){
       var a = '<div class="grid-container tokenbackground settokenbackground">';
       a += '<div class="item3 showbal">';
       a += '<input type="hidden" class="inputhidden" id="'+i+'_hdn_Tokenaddress" value="'+Tokeninfo[i]["TAddress"]+'">';
-      a += '<input type="hidden" class="inputhidden" id="'+i+'_hdn_Tokensymbol" value="'+Tokeninfo[i]["Tsymbol"]+'">';
-      a += '<input type="hidden" class="inputhidden" id="'+i+'_hdn_TokenPrecision" value="'+Tokeninfo[i]["Tdecimal"]+'">';
-      a += '<div class="token-list-item__token-symbol">'+bal+'</div>';
+      a += '<input type="hidden" class="inputhiddensymbol" id="'+i+'_hdn_Tokensymbol" value="'+Tokeninfo[i]["Tsymbol"]+'">';
+      a += '<input type="hidden" class="inputhiddenprecision" id="'+i+'_hdn_TokenPrecision" value="'+Tokeninfo[i]["Tdecimal"]+'">';
+      a += '<div class="token-list-item__token-symbol" id="div_showtokenbalance">'+bal+'</div>';
       a += '<div class="token-list-item__token-symbol" style="margin-left: 2px;">'+symbol+'</div>';
       a += '</div>';
       a += '<div class="item2 tokenname settokeninfocolor"><i class="fas fa-share" id="'+i+'_sendtoken" title="Send Token"></i>';
@@ -1052,4 +1059,50 @@ function bindDefaultNetwork(){
         $('#setNetworkname').html(current_networkname);
     });
   }
+}
+
+function updateTokenBalance(){
+
+  var PKaddress;
+  if (!(localStorage.getItem("PKaddress") === null)) {
+    PKaddress = localStorage.PKaddress;
+  }
+
+  var inputstring = "0x70a08231000000000000000000000000"+PKaddress;
+  
+  $('.tokenbackground').each(function(i, obj) {
+    var current_tokenAddr = $(this).find('.inputhidden').val();
+    var updatetokenbal = $(this).find('#div_showtokenbalance');
+
+      var jdata = { 
+        "from": PKaddress,
+        "to": current_tokenAddr,
+        "balance": "0",
+        "nonce": nonce,
+        "input":inputstring, 
+        "type":"VvmDCall"
+      } 
+    
+      $.ajax({ 
+      type : "POST", 
+      url : "http://"+Defaultipaddress+":"+DefaultVMPort+"/esGas", 
+      dataType: "json", 
+      data: JSON.stringify(jdata), 
+      contentType: 'application/json', 
+      success:function(json){ 
+        
+        //console.log(json["ret"]); 
+        var hex = json["ret"];
+        var balance = hextodecimal(hex);
+        var showbal = balance / 1000000000000000000;
+        showbal = parseFloat(showbal);
+        var setdec = showbal.toFixed(4);
+        //alert(Number(showbal));
+        updatetokenbal.html(Number(setdec));
+      }, 
+      error: function() { 
+        console.log('Error');
+      } 
+      }); 
+  });
 }

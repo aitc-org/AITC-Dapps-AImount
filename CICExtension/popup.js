@@ -11,11 +11,6 @@ $(document).ready(function() {
   $('#div_addcustomnode').click(function(){
     $('#enterCustomnode').toggle();
   });
-
-  $('#sidebarmenu').click(function(){
-    document.getElementById("settingspopup").style.display = "none";
-    $("#rightsidebar").toggle("slide");
-  });
   
   $('#close_sidebarright').click(function(){
     document.getElementById("rightsidebar").style.display = "none";
