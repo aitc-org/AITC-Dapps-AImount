@@ -25108,8 +25108,28 @@ window.addEventListener('load', function load(event){
         window.location.href = 'popup.html';
   });
 
+  $('#save_mnemonic').on('click',function(){
+    var cb = mnemonic.trim();
+    var tempInput = document.createElement("input");
+    tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+    tempInput.value = cb;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+  });
+
+  
+  $('#set_refresh').on('click',function(){
+    MnemonicGeneration();
+  });
+
   var btncreatewallet = document.getElementById('btn_createwallet');
   btncreatewallet.addEventListener('click', function() {
+    MnemonicGeneration();
+  });
+
+  function MnemonicGeneration(){
     document.getElementById('ulseed').innerHTML = "";
     var myList = ""; var listItem = ""; var listItemspan = ""; var listValue="";
     mnemonic = bip39.generateMnemonic()
@@ -25132,10 +25152,13 @@ window.addEventListener('load', function load(event){
       myList.appendChild(listItem);
     }
     document.getElementById('ulseed').append(myList);
-  });
+  }
 
   var btnconfirmcreatewallet = document.getElementById('btn_confirmcreate');
   btnconfirmcreatewallet.addEventListener('click', function() {
+
+    //if (confirm('Are you sure you have wrote down your Mnemonic Phrase?')) {
+
     var seedphrase = mnemonic.trim();
    
     var seed = bip39.mnemonicToSeedSync(mnemonic).toString('hex');
@@ -25158,6 +25181,8 @@ window.addEventListener('load', function load(event){
 
     document.getElementById('CreateWallet').style.display = "none";
     document.getElementById('importwalletoptions').style.display = "block";
+    //}
+    
   });
 
   var btnconfirmimportwallet = document.getElementById('btn_confirmimportwallet');

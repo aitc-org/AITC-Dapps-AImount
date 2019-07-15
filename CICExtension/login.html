@@ -125,13 +125,21 @@
                                   <div class="transaction-list" id="CreateWallet" style="display:none;">
                                         <div class="page-container" style="margin-left:3px;">
                                             <div class="page-container__header">
-                                              <div class="page-container__title" style="margin-bottom:8px;">Get a New Wallet</div>
+                                              <div class="page-container__title" style="margin-bottom:8px;">Get a New Wallet
+                                                <div class="random floatright" id="set_refresh">
+                                                  <i aria-hidden="true" class="fa fa-refresh"></i>
+                                                  <span>Random</span>
+                                                </div>
+                                               
+                                              </div>
                                               <div class="page-container__title" style="font-size:1.2rem;"><span style="color:red;">DO NOT FORGET </span>to save your Mnemonic Phrase and password.</div>
                                               <form class="first-time-flow__form">
                                                  
                                                   <div class="first-time-flow__textarea-wrapper seed" id="ulseed">
                                                      
                                                   </div>
+                                                  <span class="pointer" style="color: red" id="save_mnemonic">Copy to clipboard</span>
+                                                                       
                                                   <div style="display:inline-flex">
                                                     <button type="button" class="btn btn-primary first-time-flow__button savePKbutton" style="margin:10px 0;" id="btn_cancelcreate">Cancel</button>
                                                     <button type="button" class="btn btn-primary first-time-flow__button savePKbutton" style="margin:10px" id="btn_confirmcreate">Create</button>

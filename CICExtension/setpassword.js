@@ -14,21 +14,29 @@ $(document).ready(function() {
         }
     });
 
+    // Submit form on enter key
+    $('#newpassword').keydown(function (e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            $('#btnlogin').click();
+        }
+    });
+
+
     $('#btnlogin').on('click',function(){
+
         var password = $('#newpassword').val().trim();
 
         if(password.length >= 8){
             
-        localStorage.password = password;
+            localStorage.password = password;
 
-        chrome.browserAction.setPopup({
-        popup:"login.html"
-        });
-        window.location.href = 'login.html';
+            chrome.browserAction.setPopup({
+            popup:"login.html"
+            });
+            window.location.href = 'login.html';
         }
     });
-
-    
  }); 
 
  

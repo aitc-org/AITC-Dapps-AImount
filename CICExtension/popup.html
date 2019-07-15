@@ -59,13 +59,6 @@
             </div>   
             <div id="NetworkLi">
               <!-- Append dynamically Default Network here -->
-                  <!-- <li class="dropdown-menu-item" style="list-style: none; padding: 12px 0px; font-size: 16px; font-style: normal; cursor: pointer; display: flex; justify-content: flex-start; align-items: center; color: black; line-height: 20px;">
-                    <i class="fa fa-check" id="facheck" style="display: block"></i>
-                    <div class="menu-icon-circle--active" id="menuicon">
-                      <div id="menudiv" style="background: rgb(112, 87, 255); border: none; height: 12px; width: 12px;"></div>
-                    </div>
-                    <span class="network-name-item" style="color:black;">GIB Test Network</span>
-                  </li>  -->
             </div>
             <div id="CustomNetworkList">
               <!-- Append dynamically Custom Network here -->
@@ -101,7 +94,7 @@
         </div>
 
          <!--Slidebar Right Popup-->
-         <div class="wallet-view flex-column sidebar-right" id="rightsidebar" style="display: none">
+        <div class="wallet-view flex-column sidebar-right" id="rightsidebar" style="display: none">
           <div class="flex-column wallet-view-account-details">
             <div class="wallet-view__sidebar-close" id="close_sidebarright"></div>
           </div>
@@ -232,6 +225,7 @@
                                     <input type="text" class="form-control" id="inputhex" placeholder="Input" autocomplete="off">
                                   </div>
                                 </div>
+                                <button type="button" class="btn btn-primary savePKbutton" id="btncancel_tr">Cancel</button>
                                 <button type="button" class="btn btn-primary savePKbutton" id="send">Submit</button>
                             </form>
                         </div>
@@ -303,7 +297,7 @@
                     <div class="transaction-list__completed-transactions">
                       <div class="transaction-list__header">History</div>
                       <div id="historylist">
-                       <!-- Append dynamically transaction history here -->
+                        <!-- Append dynamically transaction history here -->
                       </div>
                     </div>
                   </div>

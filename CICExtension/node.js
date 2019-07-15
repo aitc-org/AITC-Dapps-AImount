@@ -286,11 +286,11 @@ window.addEventListener('load', function load(event){
     
   var createButton = document.getElementById('send');
   createButton.addEventListener('click', function() { 
-       var to = document.getElementById('inputto').value.trim();
-       var amount = document.getElementById('inputamount').value.trim();
-       var inputhex = document.getElementById('inputhex').value.trim();
+      var to = document.getElementById('inputto').value.trim();
+      var amount = document.getElementById('inputamount').value.trim();
+      var inputhex = document.getElementById('inputhex').value.trim();
 
-       if((to.length!=0) && (amount.length!=0) && (inputhex.length!=0)){
+      if((to.length!=0) && (amount.length!=0) && (inputhex.length!=0)){
         var regexp = /^[0-9a-fA-F]+$/;  //regex to check hex value
         if((to.length == 40) && (regexp.test(to)) && (regexp.test(inputhex))){
           amount = parseFloat(amount);
@@ -301,7 +301,19 @@ window.addEventListener('load', function load(event){
         else{
           console.log('invalid hex');
         }
-       }
+      }
+  });
+
+  var btncancel_tr = document.getElementById('btncancel_tr');
+  btncancel_tr.addEventListener('click', function() { 
+    document.getElementById('inputto').value = "";
+    document.getElementById('inputamount').value = "";
+    document.getElementById('inputhex').value = "";
+    $('#lbl_sendtr').html("");
+    document.getElementById('Showfromweb').style.display="none";
+    document.getElementById('span_showtokenfromweb').innerHTML = "";
+    document.getElementById('span_showtokenamountfromweb').innerHTML = "";
+    $("#sendtr").click();
   });
 
   var creatediv = document.getElementById('clk_logout');
@@ -819,6 +831,9 @@ function setTokenList(){
       console.log("Taddress: "+Tokeninfo[i]["TAddress"]);
       var bal = Tokeninfo[i]["TBalance"] / 1000000000000000000
 
+      var showbal = parseFloat(bal);
+      var setdec = showbal.toFixed(4);
+      
       var symbol = Tokeninfo[i]["Tsymbol"];
       if(symbol == "GIBT"){
         symbol = "TAC";
@@ -829,7 +844,7 @@ function setTokenList(){
       a += '<input type="hidden" class="inputhidden" id="'+i+'_hdn_Tokenaddress" value="'+Tokeninfo[i]["TAddress"]+'">';
       a += '<input type="hidden" class="inputhiddensymbol" id="'+i+'_hdn_Tokensymbol" value="'+Tokeninfo[i]["Tsymbol"]+'">';
       a += '<input type="hidden" class="inputhiddenprecision" id="'+i+'_hdn_TokenPrecision" value="'+Tokeninfo[i]["Tdecimal"]+'">';
-      a += '<div class="token-list-item__token-symbol" id="div_showtokenbalance">'+bal+'</div>';
+      a += '<div class="token-list-item__token-symbol" id="div_showtokenbalance">'+Number(setdec)+'</div>';
       a += '<div class="token-list-item__token-symbol" style="margin-left: 2px;">'+symbol+'</div>';
       a += '</div>';
       a += '<div class="item2 tokenname settokeninfocolor"><i class="fas fa-share" id="'+i+'_sendtoken" title="Send Token"></i>';

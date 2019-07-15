@@ -445,7 +445,7 @@ body{
         font-size: 2rem;
         font-weight: 500;
         line-height: 2rem;
-        margin-right: 1.5rem;
+        /* margin-right: 1.5rem; */
     }
     .page-container__header-close {
         color: #4d4d4d;
@@ -554,7 +554,8 @@ body{
         border-radius: 6px;
         width: 136px;
         height: 40px;
-        background-color: transparent;
+        /* background-color: transparent; */
+        background-color: rgb(255,255,255,0.6);
     }
     .savePKbutton{
         background-color: #999!important;
@@ -569,8 +570,21 @@ body{
         text-align: right;
     }
 
+    .floatright{
+        float: right;
+    }
+
+    .random{
+        cursor: pointer;
+        font-size: 14px;
+        color: #609a1c;
+        user-select: none;
+    }
+
     .btn-default:hover {
-        background-color: ghostwhite;
+        background-color: #999;
+        color:white;
+        border: none;
     }
 
     .private-key-password-display-textarea {
@@ -603,7 +617,7 @@ body{
         color: black;
     }
     .first-time-flow__textarea-wrapper {
-        margin-bottom: 8px;
+        margin-bottom: 8px; 
         display: inline-flex;
         padding: 0;
         position: relative;
@@ -812,7 +826,14 @@ body{
     }
 
     .settokeninfocolor{
-        color:green;
+        color:#609a1c;;
     }
 
-  
+.passwordinput{
+    padding: 8px;
+    background: rgb(255,255,255,0.6);
+}
+
+.seed{
+    margin-bottom: 0px;
+}
