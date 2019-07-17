@@ -64,6 +64,4 @@ $(document).ready(function() {
     $('#btn_cancelcreate').click(function(){
         document.getElementById('CreateWallet').style.display = "none";
     });
-
-  
 });

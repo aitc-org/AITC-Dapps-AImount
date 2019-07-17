@@ -21,6 +21,7 @@ $(document).ready(function() {
     document.getElementById("settingspopup").style.display = "none";
     document.getElementById("rightsidebar").style.display = "none";
     document.getElementById("sendtrform").style.display = "none";
+    document.getElementById("Deposit").style.display = "none";
     document.getElementById("addtokenform").style.display = "block";
     document.getElementById('txt_tokenaddress').value = "";
     document.getElementById('txt_tokensymbol').value = "";
@@ -32,6 +33,7 @@ $(document).ready(function() {
 
   $('#sendtr').click(function(){
     $('#sendtrform').toggle();
+    document.getElementById("Deposit").style.display = "none";
     document.getElementById('inputto').value = "";
     document.getElementById('inputamount').value = "";
     document.getElementById('inputhex').value = "";
@@ -39,7 +41,22 @@ $(document).ready(function() {
     document.getElementById('Showfromweb').style.display="none";
     $('#lbl_sendtr').html("");
     $('#inputto').focus();
+    checkBalance();
   });
+
+  function checkBalance(){
+    var cicbalance = document.getElementById("accbal").innerHTML;
+    if(parseFloat(cicbalance) <= 0){
+      $('#lbl_sendtr').html("Balance not enough.").css('color', 'red');
+      $("#SendTrForm").find("*").prop('disabled', true);
+      return;
+    }
+    else{
+      $('#lbl_sendtr').html("");
+    }
+  }
+
+  //Bind data from Image web into cic wallet.
 
   if (typeof(Storage) !== "undefined") {
 
@@ -52,26 +69,39 @@ $(document).ready(function() {
       console.log("Tokenaddr:"+data[0]);
       $("#sendtr").click();
 
-        if (!(localStorage.getItem("Token") === null)) {
+      if (!(localStorage.getItem("Token") === null)) {
         var Tokeninfo = JSON.parse(localStorage.getItem("Token"));
         if(Tokeninfo.length > 0){
           var tokenaddr = "0x"+data[0].trim();
           for(var i=0; i < Tokeninfo.length;i++){
             if(Tokeninfo[i]["TAddress"] == tokenaddr){
-              $("#inputto").val(data[0].trim());
-              $("#inputamount").val("0");
-              $("#inputhex").val(data[2].trim());
-              $('#lbl_sendtr').html("");
-              var symbol = Tokeninfo[i]["Tsymbol"].trim();
-              if(symbol == "GIBT"){
-                symbol = "TAC";
+
+              var tokenbal = Tokeninfo[i]["TBalance"] / 1000000000000000000;
+              
+              if(tokenbal <= 0){  //Check if token have balance.
+                $('#lbl_sendtr').html("Token Balance not enough.").css('color', 'red');
+                $("#SendTrForm").find("*").prop('disabled', true);
               }
-              document.getElementById('span_showtokenfromweb').innerHTML = symbol;
-              document.getElementById('span_showtokenamountfromweb').innerHTML = data[1].trim();
-              document.getElementById('Showfromweb').style.display="block";
-              delete localStorage.sharedData;
-              console.log(localStorage.sharedData);
-              $("#SendTrForm").find("*").prop('disabled', false);
+              else if(tokenbal < data[1].trim()){   //check if token has greater amount than buying amount.
+                $('#lbl_sendtr').html("Token Balance not enough.").css('color', 'red');
+                $("#SendTrForm").find("*").prop('disabled', true);
+              }
+              else{
+                $("#inputto").val(data[0].trim());
+                $("#inputamount").val("0");
+                $("#inputhex").val(data[2].trim());
+                $('#lbl_sendtr').html("");
+                var symbol = Tokeninfo[i]["Tsymbol"].trim();
+                if(symbol == "GIBT"){
+                  symbol = "TAC";
+                }
+                document.getElementById('span_showtokenfromweb').innerHTML = symbol;
+                document.getElementById('span_showtokenamountfromweb').innerHTML = data[1].trim();
+                document.getElementById('Showfromweb').style.display="block";
+                delete localStorage.sharedData;
+                console.log(localStorage.sharedData);
+                $("#SendTrForm").find("*").prop('disabled', false);
+              }
             }
             else{
               $("#SendTrForm").find("*").prop('disabled', true);
@@ -105,6 +135,7 @@ $(document).ready(function() {
   }
  });
 
+ 
 
 
 

@@ -25117,6 +25117,10 @@ window.addEventListener('load', function load(event){
     tempInput.select();
     document.execCommand("copy");
     document.body.removeChild(tempInput);
+    $(this).html('Copied!');
+    setTimeout(function(){
+      $('#save_mnemonic').html('Copy to clipboard');
+    },3000);
   });
 
   

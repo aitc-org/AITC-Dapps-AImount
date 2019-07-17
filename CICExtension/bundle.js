@@ -33460,6 +33460,26 @@ window.addEventListener('load', function load(event){
     document.getElementById('addcustomnode_cancel').click();
   });
 
+  var dep = document.getElementById('dep');
+  dep.addEventListener('click', function() { 
+    document.getElementById("Sendtokenform").style.display = "none";
+    document.getElementById("settingspopup").style.display = "none";
+    document.getElementById("rightsidebar").style.display = "none";
+    document.getElementById("sendtrform").style.display = "none";
+    document.getElementById("addtokenform").style.display = "none";
+    $("#Deposit").toggle();
+    var PKaddress;
+    if (!(localStorage.getItem("PKaddress") === null)) {
+      var address = localStorage.PKaddress;
+      document.getElementById("span_address").value = address;
+    }
+  });
+
+  $('#span_address').click(function(event) {
+    this.select();
+    document.execCommand("copy");
+  });
+
   $("#txt_nodeurl,#txt_nodename,#txt_nodemainport,#txt_nodeVMport,#txt_nodeAppport").on('keyup', function() {
     var nodeurl = $('#txt_nodeurl').val().trim();
     var regex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
@@ -33876,6 +33896,7 @@ function setTokenList(){
       $('#'+i+'_sendtoken').on('click', function(){
         document.getElementById("rightsidebar").style.display = "none";
         document.getElementById("addtokenform").style.display = "none";
+        document.getElementById("Deposit").style.display = "none";
         document.getElementById("Sendtokenform").style.display = "block";
         document.getElementById('inputtotoken').value = "";
         document.getElementById('inputamounttoken').value = "";
@@ -34092,6 +34113,7 @@ function bindDefaultNetwork(){
   }
 }
 
+//update the token balance and token localstorage accordingly.
 function updateTokenBalance(){
 
   var PKaddress;
@@ -34104,6 +34126,10 @@ function updateTokenBalance(){
   $('.tokenbackground').each(function(i, obj) {
     var current_tokenAddr = $(this).find('.inputhidden').val();
     var updatetokenbal = $(this).find('#div_showtokenbalance');
+    var current_tokensymbol = $(this).find('.inputhiddensymbol').val();
+    var current_tokenPrecision = $(this).find('.inputhiddenprecision').val();
+
+    removeTokenLocalstorage(current_tokenAddr);
 
       var jdata = { 
         "from": PKaddress,
@@ -34128,8 +34154,21 @@ function updateTokenBalance(){
         var showbal = balance / 1000000000000000000;
         showbal = parseFloat(showbal);
         var setdec = showbal.toFixed(4);
-        //alert(Number(showbal));
         updatetokenbal.html(Number(setdec));
+
+        //update token localstorage.
+        var token =[];
+        var tokeninfo = {"TAddress":current_tokenAddr,"Tsymbol":current_tokensymbol,"Tdecimal":current_tokenPrecision,"TBalance":balance}
+          
+        if (!(localStorage.getItem("Token") === null)) {
+            var storeTokeninfo = JSON.parse(localStorage.getItem("Token"));
+            storeTokeninfo.push(tokeninfo);
+            localStorage.setItem('Token', JSON.stringify(storeTokeninfo));
+        }
+        else{
+            token.push(tokeninfo);
+            localStorage.setItem('Token', JSON.stringify(token));
+        }
       }, 
       error: function() { 
         console.log('Error');
