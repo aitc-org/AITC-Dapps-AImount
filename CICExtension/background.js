@@ -4,7 +4,6 @@ chrome.runtime.onMessageExternal.addListener(function(request, sender, sendRespo
     localStorage.sharedData = request;
     localStorage.openwindow = 1;
 
-    
     if (!(localStorage.getItem("PK") === null)) {
         window.open("popup.html", "CIC Notification", "width=357,height=600,status=no,scrollbars=yes,resizable=no");
     }
@@ -12,4 +11,5 @@ chrome.runtime.onMessageExternal.addListener(function(request, sender, sendRespo
         window.open("setpassword.html", "CIC Notification", "width=357,height=600,status=no,scrollbars=yes,resizable=no");
     }
 });
+
 

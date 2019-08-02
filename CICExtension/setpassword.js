@@ -28,6 +28,14 @@ $(document).ready(function() {
         var password = $('#newpassword').val().trim();
 
         if(password.length >= 8){
+
+            if($('#logourl').val() != "")
+            {
+                localStorage.logo = $('#logourl').val().trim();
+            }
+            if($('#backgroundurl').val() != ""){
+                localStorage.backgroundurl = $('#backgroundurl').val().trim();
+            }
             
             localStorage.password = password;
 
@@ -39,4 +47,5 @@ $(document).ready(function() {
     });
  }); 
 
+ 
  

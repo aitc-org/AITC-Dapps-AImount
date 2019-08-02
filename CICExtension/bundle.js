@@ -33074,11 +33074,14 @@ function sendTransactionBroadcast(result,to,amount){
     contentType: 'text/plain; charset=UTF-8', 
     success:function(json){ 
       console.log(json);
-     
+      var gasfee = 0.1;
       var minus = ShowBalance - amount;
       var newetherprice = minus / 1000000000000000000;
+      newetherprice = newetherprice - gasfee;
+      var showbal = parseFloat(newetherprice);
+      var setdec = showbal.toFixed(4);
       console.log(newetherprice);
-      document.getElementById("accbal").innerHTML = newetherprice;
+      document.getElementById("accbal").innerHTML = setdec;
       ShowBalance = minus;
       nonce = nonce + 1; //This is only for demo.
       
@@ -33254,7 +33257,9 @@ function getBalance() {
         if(ShowBalance!=""){
           ShowBalance = parseFloat(ShowBalance);
           var etherprice = ShowBalance / 1000000000000000000;
-          document.getElementById("accbal").innerHTML = String(etherprice);
+          var showbal = parseFloat(etherprice);
+          var setdec = showbal.toFixed(4);
+          document.getElementById("accbal").innerHTML = String(setdec);
           console.log(etherprice);
         }
         else{

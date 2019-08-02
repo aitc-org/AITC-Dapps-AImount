@@ -1,4 +1,6 @@
 $(document).ready(function() { 
+    setLogo();
+
     $('#togglenode').click(function(){
         $('#nodepopup').toggle();
     });
@@ -65,3 +67,31 @@ $(document).ready(function() {
         document.getElementById('CreateWallet').style.display = "none";
     });
 });
+
+function setLogo(){
+    if (!(localStorage.getItem("logo") === null)) {
+        var logo = localStorage.logo;
+        document.getElementById("setlogo").src= logo;
+        document.getElementById("setlogo2").src= logo;
+    }
+    else{
+        document.getElementById("setlogo").src= 'https://tongkatali.io/wp-content/uploads/2018/11/tac-logo.png';
+        document.getElementById("setlogo2").src= 'https://tongkatali.io/wp-content/uploads/2018/11/tac-logo.png';
+    }
+    if (!(localStorage.getItem("backgroundurl") === null)) {
+        var bk = localStorage.backgroundurl;
+        var square = document.getElementById('maincontainerdiv');
+        square.style.backgroundImage = "url("+bk+")";
+        square.style.backgroundRepeat = 'no-repeat';
+        square.style.backgroundPosition = 'center';
+        square.style.backgroundSize = 'contain';
+    }
+    else{
+        var bk = 'https://bionutriciaextract.com/wp-content/uploads/2018/11/bio-nutricia-extract-tongkat-ali-long-jack-powder-manufacture.jpg';
+        var square = document.getElementById('maincontainerdiv');
+        square.style.backgroundImage = "url("+bk+")";
+        square.style.backgroundRepeat = 'no-repeat';
+        square.style.backgroundPosition = 'center';
+        square.style.backgroundSize = 'contain';
+    }
+}
